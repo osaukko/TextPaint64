@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>charsets/Default</file>
+        <file>charsets/Default (shifted)</file>
+        <file>charsets/Japanese</file>
+        <file>charsets/Japanese (shifted)</file>
+        <file>charsets/Scandinavian</file>
+        <file>charsets/Scandinavian (shifted)</file>
+    </qresource>
+</RCC>

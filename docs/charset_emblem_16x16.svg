@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="16"
+   id="svg1901"
+   sodipodi:version="0.32"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="charset_emblem_16x16.svg"
+   version="1.1"
+   inkscape:export-filename="/home/osaukko/Ohjelmointi/Projektit/Paint64/docs/charset_emblem_16x16.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs1903">
+    <linearGradient
+       id="linearGradient3778">
+      <stop
+         style="stop-color:#6c5eb5;stop-opacity:1;"
+         offset="0"
+         id="stop3780" />
+      <stop
+         style="stop-color:#352879;stop-opacity:1;"
+         offset="1"
+         id="stop3782" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3778"
+       id="radialGradient3786"
+       cx="3.9776518"
+       cy="1046.3308"
+       fx="3.9776518"
+       fy="1046.3308"
+       r="3"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0,3.3147142,-3.1766178,0,3331.7484,1027.1147)" />
+    <filter
+       inkscape:collect="always"
+       id="filter3950"
+       x="-0.12"
+       width="1.24"
+       y="-0.12"
+       height="1.24">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.75"
+         id="feGaussianBlur3952" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="20.885024"
+     inkscape:cx="7.1604498"
+     inkscape:cy="-3.0424542"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="1276"
+     inkscape:window-height="1353"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     showgrid="false"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata1906">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Taso 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1036.3622)">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:none;filter:url(#filter3950)"
+       id="rect3006-8"
+       width="15"
+       height="15"
+       x="0.5"
+       y="1036.8622"
+       rx="1.0714285"
+       ry="1.0714285"
+       inkscape:export-xdpi="8.4399996"
+       inkscape:export-ydpi="8.4399996" />
+    <rect
+       style="fill:#ffffff;fill-opacity:0.94230772;stroke:none"
+       id="rect3006"
+       width="14"
+       height="14"
+       x="1"
+       y="1037.3622"
+       rx="1"
+       ry="1"
+       inkscape:export-xdpi="8.4399996"
+       inkscape:export-ydpi="8.4399996" />
+    <rect
+       style="fill:url(#radialGradient3786);fill-opacity:1;stroke:none"
+       id="rect3776"
+       width="12"
+       height="12"
+       x="2"
+       y="1038.3621"
+       rx="1"
+       ry="1" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-weight:bold;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+       x="4.2407131"
+       y="1048.7021"
+       id="text3890"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3892"
+         x="4.2407131"
+         y="1048.7021"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu Mono;-inkscape-font-specification:Ubuntu Mono Bold">C</tspan></text>
+  </g>
+</svg>
