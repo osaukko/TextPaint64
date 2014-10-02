@@ -16,9 +16,11 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "mainwindow.h"
-#include "iconcache.h"
+#include "gui/mainwindow.h"
+#include "base/iconcache.h"
+
 #include <QtGui>
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QtWidgets>
 #endif // Qt5

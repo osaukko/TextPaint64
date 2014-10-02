@@ -19,7 +19,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="mainVerticalLayout">
     <item>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="screenLabel">
       <property name="text">
        <string>Screen</string>
       </property>
@@ -65,7 +65,7 @@
             <string>(1) Normal painting</string>
            </property>
            <property name="icon">
-            <iconset resource="icons.qrc">
+            <iconset resource="../resources/icons.qrc">
              <normaloff>:/icons/16x16/paint-normal.png</normaloff>:/icons/16x16/paint-normal.png</iconset>
            </property>
            <property name="checkable">
@@ -88,7 +88,7 @@
             <string>(2) Color painting only</string>
            </property>
            <property name="icon">
-            <iconset resource="icons.qrc">
+            <iconset resource="../resources/icons.qrc">
              <normaloff>:/icons/16x16/paint-color.png</normaloff>:/icons/16x16/paint-color.png</iconset>
            </property>
            <property name="checkable">
@@ -108,7 +108,7 @@
             <string>(3) Character paiting only</string>
            </property>
            <property name="icon">
-            <iconset resource="icons.qrc">
+            <iconset resource="../resources/icons.qrc">
              <normaloff>:/icons/16x16/paint-character.png</normaloff>:/icons/16x16/paint-character.png</iconset>
            </property>
            <property name="checkable">
@@ -179,7 +179,7 @@
       <string>&amp;Load Built-in</string>
      </property>
      <property name="icon">
-      <iconset resource="icons.qrc">
+      <iconset resource="../resources/icons.qrc">
        <normaloff>:/icons/16x16/media-flash.png</normaloff>:/icons/16x16/media-flash.png</iconset>
      </property>
     </widget>
@@ -202,7 +202,7 @@
       <string>&amp;Docks</string>
      </property>
      <property name="icon">
-      <iconset resource="icons.qrc">
+      <iconset resource="../resources/icons.qrc">
        <normaloff>:/icons/16x16/view-form.png</normaloff>:/icons/16x16/view-form.png</iconset>
      </property>
     </widget>
@@ -214,7 +214,7 @@
       <string>&amp;Toolbars</string>
      </property>
      <property name="icon">
-      <iconset resource="icons.qrc">
+      <iconset resource="../resources/icons.qrc">
        <normaloff>:/icons/16x16/configure-toolbars.png</normaloff>:/icons/16x16/configure-toolbars.png</iconset>
      </property>
      <widget class="QMenu" name="menuIconSize">
@@ -240,7 +240,7 @@
       <string>&amp;Hi-Res Text Mode</string>
      </property>
      <property name="icon">
-      <iconset resource="icons.qrc">
+      <iconset resource="../resources/icons.qrc">
        <normaloff>:/icons/16x16/view-grid.png</normaloff>:/icons/16x16/view-grid.png</iconset>
      </property>
      <addaction name="actionScreenMode38x24"/>
@@ -258,7 +258,7 @@
       <string>&amp;Pixel scaling</string>
      </property>
      <property name="icon">
-      <iconset resource="icons.qrc">
+      <iconset resource="../resources/icons.qrc">
        <normaloff>:/icons/16x16/page-zoom.png</normaloff>:/icons/16x16/page-zoom.png</iconset>
      </property>
      <addaction name="actionScale1x"/>
@@ -297,7 +297,7 @@
       <string>&amp;Recent Projects</string>
      </property>
      <property name="icon">
-      <iconset resource="icons.qrc">
+      <iconset resource="../resources/icons.qrc">
        <normaloff>:/icons/16x16/document-open-recent.png</normaloff>:/icons/16x16/document-open-recent.png</iconset>
      </property>
     </widget>
@@ -619,7 +619,7 @@
   </widget>
   <action name="actionCharsetOpenFile">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-open.png</normaloff>:/icons/16x16/document-open.png</iconset>
    </property>
    <property name="text">
@@ -631,7 +631,7 @@
   </action>
   <action name="actionCharsetSaveAs">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-save-as.png</normaloff>:/icons/16x16/document-save-as.png</iconset>
    </property>
    <property name="text">
@@ -643,7 +643,7 @@
   </action>
   <action name="actionCharsetClear">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/edit-clear.png</normaloff>:/icons/16x16/edit-clear.png</iconset>
    </property>
    <property name="text">
@@ -722,7 +722,7 @@
   </action>
   <action name="actionAboutTextPaint64">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset>
      <normaloff>:/icons/16x16/paint64.png</normaloff>:/icons/16x16/paint64.png</iconset>
    </property>
    <property name="text">
@@ -734,7 +734,7 @@
   </action>
   <action name="actionAboutQt">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/qt-logo.png</normaloff>:/icons/16x16/qt-logo.png</iconset>
    </property>
    <property name="text">
@@ -746,7 +746,7 @@
   </action>
   <action name="actionScreenOpenCharacterData">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-open.png</normaloff>:/icons/16x16/document-open.png</iconset>
    </property>
    <property name="text">
@@ -758,7 +758,7 @@
   </action>
   <action name="actionScreenSaveCharacterData">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-save.png</normaloff>:/icons/16x16/document-save.png</iconset>
    </property>
    <property name="text">
@@ -770,7 +770,7 @@
   </action>
   <action name="actionScreenOpenColorData">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-open.png</normaloff>:/icons/16x16/document-open.png</iconset>
    </property>
    <property name="text">
@@ -782,7 +782,7 @@
   </action>
   <action name="actionScreenSaveColorData">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-save.png</normaloff>:/icons/16x16/document-save.png</iconset>
    </property>
    <property name="text">
@@ -794,7 +794,7 @@
   </action>
   <action name="actionFileNewProject">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-new.png</normaloff>:/icons/16x16/document-new.png</iconset>
    </property>
    <property name="text">
@@ -809,7 +809,7 @@
   </action>
   <action name="actionFileOpenProject">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-open.png</normaloff>:/icons/16x16/document-open.png</iconset>
    </property>
    <property name="text">
@@ -824,7 +824,7 @@
   </action>
   <action name="actionFileSaveProjectAs">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-save-as.png</normaloff>:/icons/16x16/document-save-as.png</iconset>
    </property>
    <property name="text">
@@ -839,7 +839,7 @@
   </action>
   <action name="actionFileSaveProject">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/document-save.png</normaloff>:/icons/16x16/document-save.png</iconset>
    </property>
    <property name="text">
@@ -854,7 +854,7 @@
   </action>
   <action name="actionFileExit">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="../resources/icons.qrc">
      <normaloff>:/icons/16x16/application-exit.png</normaloff>:/icons/16x16/application-exit.png</iconset>
    </property>
    <property name="text">
@@ -931,25 +931,25 @@
   <customwidget>
    <class>CharsetWidget</class>
    <extends>QWidget</extends>
-   <header>charsetwidget.h</header>
+   <header>gui/charsetwidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CharacterEditor</class>
    <extends>QWidget</extends>
-   <header>charactereditor.h</header>
+   <header>gui/charactereditor.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PaletteWidget</class>
    <extends>QWidget</extends>
-   <header>palettewidget.h</header>
+   <header>gui/palettewidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ScreenWidget</class>
    <extends>QWidget</extends>
-   <header>screenwidget.h</header>
+   <header>gui/screenwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -968,7 +968,7 @@
   <tabstop>characterPaintToolButton</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="../resources/icons.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -16,8 +16,8 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "setbackgroundcommand.h"
-#include "palettewidget.h"
+#include "undo/setbackgroundcommand.h"
+#include "gui/palettewidget.h"
 
 SetBackgroundCommand::SetBackgroundCommand(PaletteWidget *target, int undoIndex, int redoIndex)
     : m_redoIndex(redoIndex)

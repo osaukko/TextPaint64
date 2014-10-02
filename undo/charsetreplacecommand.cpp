@@ -16,13 +16,24 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QApplication>
-#include "mainwindow.h"
+#include "undo/charsetreplacecommand.h"
+#include "gui/charsetwidget.h"
 
-int main(int argc, char *argv[])
+CharsetReplaceCommand::CharsetReplaceCommand(CharsetWidget *target, const QByteArray &undoData,
+                                             const QByteArray &redoData)
+    : m_redoData(redoData)
+    , m_undoData(undoData)
+    , m_charsetWidget(target)
 {
-    QApplication app(argc, argv);
-    MainWindow win;
-    win.show();
-    return app.exec();
+    setText(QObject::tr("charset replace"));
+}
+
+void CharsetReplaceCommand::redo()
+{
+    m_charsetWidget->setCharset(m_redoData, false);
+}
+
+void CharsetReplaceCommand::undo()
+{
+    m_charsetWidget->setCharset(m_undoData, false);
 }

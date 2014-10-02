@@ -16,8 +16,8 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "screenchangecommand.h"
-#include "screenwidget.h"
+#include "undo/screenchangecommand.h"
+#include "gui/screenwidget.h"
 
 ScreenChangeCommand::ScreenChangeCommand(ScreenWidget *target,
                                          const QString &text,

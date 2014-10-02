@@ -14,36 +14,36 @@ QT += \
     widgets
 
 HEADERS += \
-    charactereditcommand.h \
-    charactereditor.h \
-    charsetreplacecommand.h \
-    charsetwidget.h \
-    iconcache.h \
-    mainwindow.h \
-    palettewidget.h \
-    screenchangecommand.h \
-    screenwidget.h \
-    setbackgroundcommand.h
+    base/iconcache.h \
+    gui/charactereditor.h \
+    gui/charsetwidget.h \
+    gui/mainwindow.h \
+    gui/palettewidget.h \
+    gui/screenwidget.h \
+    undo/charactereditcommand.h \
+    undo/charsetreplacecommand.h \
+    undo/screenchangecommand.h \
+    undo/setbackgroundcommand.h
 
 SOURCES += \
-    charactereditcommand.cpp \
-    charactereditor.cpp \
-    charsetreplacecommand.cpp \
-    charsetwidget.cpp \
-    iconcache.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    palettewidget.cpp \
-    screenchangecommand.cpp \
-    screenwidget.cpp \
-    setbackgroundcommand.cpp
+    base/iconcache.cpp \
+    base/main.cpp \
+    gui/charactereditor.cpp \
+    gui/charsetwidget.cpp \
+    gui/mainwindow.cpp \
+    gui/palettewidget.cpp \
+    gui/screenwidget.cpp \
+    undo/charactereditcommand.cpp \
+    undo/charsetreplacecommand.cpp \
+    undo/screenchangecommand.cpp \
+    undo/setbackgroundcommand.cpp
 
 FORMS += \
-    mainwindow.ui
+    gui/mainwindow.ui
 
 RESOURCES += \
-    charsets.qrc \
-    icons.qrc
+    resources/charsets.qrc \
+    resources/icons.qrc
 
-mac: ICON = appicon.icns
-win32: RC_FILE = appicon.rc
+mac: ICON = resources/appicon.icns
+win32: RC_FILE = resources/appicon.rc

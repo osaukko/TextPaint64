@@ -39,7 +39,6 @@
 
 #include "iconcache.h"
 
-#include <QDebug>
 #include <QDir>
 
 // Public interface

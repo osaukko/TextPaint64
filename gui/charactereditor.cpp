@@ -16,8 +16,10 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "charactereditor.h"
+#include "gui/charactereditor.h"
+
 #include <QtGui>
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QtWidgets>
 #endif // Qt5

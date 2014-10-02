@@ -16,8 +16,8 @@
  * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "charactereditcommand.h"
-#include "charsetwidget.h"
+#include "undo/charactereditcommand.h"
+#include "gui/charsetwidget.h"
 
 CharacterEditCommand::CharacterEditCommand(CharsetWidget *target, int index,
                                            const QByteArray &undoData, const QByteArray &redoData)
