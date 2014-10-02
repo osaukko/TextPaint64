@@ -47,3 +47,10 @@ RESOURCES += \
 
 mac: ICON = resources/appicon.icns
 win32: RC_FILE = resources/appicon.rc
+
+OTHER_FILES += \
+    COPYING \
+    COPYING.ICONCACHE \
+    COPYING.ICONS \
+    COPYRIGHT \
+    README.md

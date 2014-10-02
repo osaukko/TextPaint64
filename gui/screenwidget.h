@@ -36,6 +36,10 @@ public:
         PaintCharacter  = 0x02,
         PaintBoth       = 0x03
     };
+    enum PaintTool {
+        DrawPoints,
+        DrawLines
+    };
 
 public:
     explicit        ScreenWidget(QWidget *parent = 0);
@@ -65,7 +69,9 @@ signals:
     void            undoCommandReady();
 
 public slots:
-    void            setCursorPos(const QPoint &pos);
+    void            setCursorPos(const QPoint &screenPos);
+    void            setDrawPoints();
+    void            setDrawLines();
     void            setOverlayEnabled(bool enabled);
     void            setOverlayImageFile(const QString &fileName);
     void            setOverlayOpacity(qreal opacity);
@@ -94,11 +100,13 @@ private slots:
 
 private:
     QPixmap         characterPixmap(uchar color, uchar character);
-    bool            getCharacterPosition(const QPoint &pos, int &col, int &row);
+    void            drawAt(const QPoint &pos);
+    void            drawCharacter(const QPoint &screenPos, uchar color, uchar character);
+    void            drawLine(const QPoint &sp1, const QPoint &sp2, uchar color, uchar character);
+    void            eraseAt(const QPoint &pos);
+    bool            getScreenPosition(const QPoint &mousePos, QPoint &screenPos);
     void            paintChangedCharacters(uchar character);
-    void            paintCharacterAt(const QPoint &pos);
     void            paintCursorPixmap();
-    void            paintNullCharacterAt(const QPoint &pos);
     void            paintScreenPixmap();
     void            setupScreen();
     void            undoDataBegin(const QString &undoText);
@@ -117,11 +125,13 @@ private:
     QPoint          m_overlayPixmapOffset;
     qreal           m_overlayPixmapOpacity;
     PaintMode       m_paintMode;
+    PaintTool       m_paintTool;
     bool            m_paiting;
     QByteArray      m_redoColorData;
     QByteArray      m_redoScreenData;
     QSize           m_redoSize;
     QPixmap         m_screenPixmap;
+    QPoint          m_screenPosBefore;
     QSize           m_screenSize;
     QByteArray      m_undoColorData;
     QByteArray      m_undoScreenData;

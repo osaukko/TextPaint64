@@ -777,6 +777,12 @@ void MainWindow::setupConnections()
     connect(characterPaintToolButton,   SIGNAL(clicked()),
             screenWidget,               SLOT(setPaintCharactersOnly()));
 
+    // Draw tools
+    connect(drawLinesToolButton,        SIGNAL(clicked()),
+            screenWidget,               SLOT(setDrawLines()));
+    connect(drawPointsToolButton,       SIGNAL(clicked()),
+            screenWidget,               SLOT(setDrawPoints()));
+
     // Modification updates
     connect(charsetWidget,  SIGNAL(charsetChanged()),                   SLOT(onModify()));
     connect(editorWidget,   SIGNAL(characterDataChanged(QByteArray)),   SLOT(onModify()));

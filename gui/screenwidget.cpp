@@ -36,6 +36,7 @@ ScreenWidget::ScreenWidget(QWidget *parent)
     , m_overlayEnabled(false)
     , m_overlayPixmapOpacity(0.5)
     , m_paintMode(PaintBoth)
+    , m_paintTool(DrawLines)
     , m_paiting(false)
     , m_screenSize(0, 0)
     , m_charsetWidget(0)
@@ -235,6 +236,16 @@ void ScreenWidget::setCursorPos(const QPoint &pos)
         update(m_cursorPixmapPos.x(), m_cursorPixmapPos.y(), m_characterSize, m_characterSize);
 }
 
+void ScreenWidget::setDrawPoints()
+{
+    m_paintTool = DrawPoints;
+}
+
+void ScreenWidget::setDrawLines()
+{
+    m_paintTool = DrawLines;
+}
+
 void ScreenWidget::setOverlayEnabled(bool enabled)
 {
     if (m_overlayEnabled == enabled)
@@ -369,9 +380,10 @@ void ScreenWidget::mouseMoveEvent(QMouseEvent *event)
 {
     QWidget::mouseMoveEvent(event);
     if (event->buttons().testFlag(Qt::NoButton)) {
-        int col, row;
-        if (getCharacterPosition(event->pos(), col, row)) {
-            setCursorPos(QPoint(col * m_characterSize + 2, row * m_characterSize + 2));
+        QPoint screenPos;
+        if (getScreenPosition(event->pos(), screenPos)) {
+            setCursorPos(QPoint(screenPos.x() * m_characterSize + 2,
+                                screenPos.y() * m_characterSize + 2));
         } else {
             setCursorPos(QPoint());
         }
@@ -382,9 +394,9 @@ void ScreenWidget::mouseMoveEvent(QMouseEvent *event)
     if (!m_paiting)
         return;
     if (event->buttons().testFlag(Qt::LeftButton)) {
-        paintCharacterAt(event->pos());
+        drawAt(event->pos());
     } else if (event->buttons().testFlag(Qt::RightButton)) {
-        paintNullCharacterAt(event->pos());
+        eraseAt(event->pos());
     }
 }
 
@@ -393,18 +405,21 @@ void ScreenWidget::mousePressEvent(QMouseEvent *event)
     QWidget::mousePressEvent(event);
     if (m_paiting)
         return;
+    // Testing if point is valid for paiting and also save screen position for line paiting.
+    if (!getScreenPosition(event->pos(), m_screenPosBefore))
+        return;
     switch (event->button()) {
     case Qt::LeftButton:
         m_paiting = true;
         undoDataBegin(tr("screen paiting"));
         setCursorPos(QPoint());
-        paintCharacterAt(event->pos());
+        drawAt(event->pos());
         break;
     case Qt::RightButton:
         m_paiting = true;
         undoDataBegin(tr("screen erase"));
         setCursorPos(QPoint());
-        paintNullCharacterAt(event->pos());
+        eraseAt(event->pos());
         break;
     default:
         break;
@@ -414,9 +429,10 @@ void ScreenWidget::mousePressEvent(QMouseEvent *event)
 void ScreenWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     QWidget::mouseReleaseEvent(event);
-    int col, row;
-    if (getCharacterPosition(event->pos(), col, row)) {
-        setCursorPos(QPoint(col * m_characterSize + 2, row * m_characterSize + 2));
+    QPoint screenPos;
+    if (getScreenPosition(event->pos(), screenPos)) {
+        setCursorPos(QPoint(screenPos.x() * m_characterSize + 2,
+                            screenPos.y() * m_characterSize + 2));
     } else {
         setCursorPos(QPoint());
     }
@@ -517,13 +533,130 @@ QPixmap ScreenWidget::characterPixmap(uchar color, uchar character)
     return m_characterPixmaps[color][character];
 }
 
-bool ScreenWidget::getCharacterPosition(const QPoint &pos, int &col, int &row)
+void ScreenWidget::drawAt(const QPoint &pos)
 {
-    if (pos.x() < 2 || pos.y() < 2)
+    // Get character position
+    QPoint screenPos;
+    if (!getScreenPosition(pos, screenPos))
+        return; // Invalid position
+    const uchar color = m_paletteWidget->foregroundColorIndex();
+    const uchar character = m_charsetWidget->selectedCharacterIndex();
+    switch (m_paintTool) {
+    case DrawLines:
+        if (m_screenPosBefore != screenPos) {
+            drawLine(m_screenPosBefore, screenPos, color, character);
+            m_screenPosBefore = screenPos;
+        }
+        break;
+    case DrawPoints:
+        drawCharacter(screenPos, color, character);
+        break;
+    default:
+        break;
+    }
+}
+
+void ScreenWidget::drawCharacter(const QPoint &pos, uchar color, uchar character)
+{
+    Q_ASSERT(pos.x() >= 0 && pos.x() < m_screenSize.width());
+    Q_ASSERT(pos.y() >= 0 && pos.y() < m_screenSize.height());
+
+    // Update memory
+    const int &col = pos.x();
+    const int &row = pos.y();
+    if (m_paintMode & PaintCharacter)
+        m_characterLines[row][col] = character;
+    if (m_paintMode & PaintColor)
+        m_colorLines[row][col] = color;
+
+    // Paint and update character into screen
+    QPainter p(&m_screenPixmap);
+    const QRect targetRect(col * m_characterSize + 2, row * m_characterSize + 2,
+                           m_characterSize, m_characterSize);
+    p.drawPixmap(targetRect, characterPixmap(m_colorLines[row][col], m_characterLines[row][col]));
+    update(targetRect);
+
+    emit screenDataChanged();
+}
+
+void ScreenWidget::drawLine(const QPoint &p1, const QPoint &p2, uchar color, uchar character)
+{
+    Q_ASSERT(p1 != p2);
+    qreal dx = p2.x() - p1.x();
+    qreal dy = p2.y() - p1.y();
+    if (qAbs(dx) < qAbs(dy)) {
+        // Vertical drawing
+        const qreal slope = dx / dy;
+        int y1;     // Start Y
+        int y2;     // Stop Y
+        qreal rx;   // Start X
+        if (p1.y() < p2.y()) {
+            y1 = p1.y();
+            y2 = p2.y();
+            rx = p1.x();
+        } else {
+            y1 = p2.y();
+            y2 = p1.y();
+            rx = p2.x();
+        }
+        for (int y=y1; y<=y2; ++y) {
+            int x = static_cast<int>(rx + 0.5); // + 0.5 for a cheap rounding
+            drawCharacter(QPoint(x, y), color, character);
+            rx += slope;
+        }
+    } else {
+        // Horizontal drawing
+        const qreal slope = dy / dx;
+        int x1;     // Start X
+        int x2;     // Stop X
+        qreal ry;   // Start Y
+        if (p1.x() < p2.x()) {
+            x1 = p1.x();
+            x2 = p2.x();
+            ry = p1.y();
+        } else {
+            x1 = p2.x();
+            x2 = p1.x();
+            ry = p2.y();
+        }
+        for (int x=x1; x<=x2; ++x) {
+            int y = static_cast<int>(ry + 0.5); // + 0.5 for a cheap rounding
+            drawCharacter(QPoint(x, y), color, character);
+            ry += slope;
+        }
+    }
+}
+
+void ScreenWidget::eraseAt(const QPoint &pos)
+{
+    // Get character position
+    QPoint screenPos;
+    if (!getScreenPosition(pos, screenPos))
+        return; // Invalid position
+    const uchar color = 0;
+    const uchar character = 0;
+    switch (m_paintTool) {
+    case DrawLines:
+        if (m_screenPosBefore != screenPos) {
+            drawLine(m_screenPosBefore, screenPos, color, character);
+            m_screenPosBefore = screenPos;
+        }
+        break;
+    case DrawPoints:
+        drawCharacter(screenPos, color, character);
+        break;
+    default:
+        break;
+    }
+}
+
+bool ScreenWidget::getScreenPosition(const QPoint &mousePos, QPoint &screenPos)
+{
+    if (mousePos.x() < 2 || mousePos.y() < 2)
         return false;
-    col = (pos.x() - 2) / m_characterSize;
-    row = (pos.y() - 2) / m_characterSize;
-    return (col < m_screenSize.width() && row < m_screenSize.height());
+    screenPos.setX((mousePos.x() - 2) / m_characterSize);
+    screenPos.setY((mousePos.y() - 2) / m_characterSize);
+    return (screenPos.x() < m_screenSize.width() && screenPos.y() < m_screenSize.height());
 }
 
 void ScreenWidget::paintChangedCharacters(uchar character)
@@ -540,29 +673,6 @@ void ScreenWidget::paintChangedCharacters(uchar character)
             }
         }
     }
-}
-
-void ScreenWidget::paintCharacterAt(const QPoint &pos)
-{
-    // Get character position
-    int col, row;
-    if (!getCharacterPosition(pos, col, row))
-        return;
-
-    // Update memory
-    if (m_paintMode & PaintCharacter)
-        m_characterLines[row][col] = m_charsetWidget->selectedCharacterIndex();
-    if (m_paintMode & PaintColor)
-        m_colorLines[row][col] = m_paletteWidget->foregroundColorIndex();
-
-    // Paint and update character into screen
-    QPainter p(&m_screenPixmap);
-    const QRect targetRect(col * m_characterSize + 2, row * m_characterSize + 2,
-                           m_characterSize, m_characterSize);
-    p.drawPixmap(targetRect, characterPixmap(m_colorLines[row][col], m_characterLines[row][col]));
-    update(targetRect);
-
-    emit screenDataChanged();
 }
 
 void ScreenWidget::paintCursorPixmap()
@@ -604,29 +714,6 @@ void ScreenWidget::paintCursorPixmap()
     }
         break;
     }
-}
-
-void ScreenWidget::paintNullCharacterAt(const QPoint &pos)
-{
-    // Get character position
-    int col, row;
-    if (!getCharacterPosition(pos, col, row))
-        return;
-
-    // Update memory
-    if (m_paintMode & PaintCharacter)
-        m_characterLines[row][col] = 0;
-    if (m_paintMode & PaintColor)
-        m_colorLines[row][col] = 0;
-
-    // Paint and update character into screen
-    QPainter p(&m_screenPixmap);
-    const QRect targetRect(col * m_characterSize + 2, row * m_characterSize + 2,
-                           m_characterSize, m_characterSize);
-    p.drawPixmap(targetRect, characterPixmap(m_colorLines[row][col], m_characterLines[row][col]));
-    update(targetRect);
-
-    emit screenDataChanged();
 }
 
 void ScreenWidget::paintScreenPixmap()

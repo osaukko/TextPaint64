@@ -11,6 +11,8 @@
         <file>icons/16x16/document-open.png</file>
         <file>icons/16x16/document-save-as.png</file>
         <file>icons/16x16/document-save.png</file>
+        <file>icons/16x16/draw-freehand-lines.png</file>
+        <file>icons/16x16/draw-freehand-points.png</file>
         <file>icons/16x16/edit-clear.png</file>
         <file>icons/16x16/edit-redo.png</file>
         <file>icons/16x16/edit-undo.png</file>
@@ -36,6 +38,8 @@
         <file>icons/22x22/document-open.png</file>
         <file>icons/22x22/document-save-as.png</file>
         <file>icons/22x22/document-save.png</file>
+        <file>icons/22x22/draw-freehand-lines.png</file>
+        <file>icons/22x22/draw-freehand-points.png</file>
         <file>icons/22x22/edit-clear.png</file>
         <file>icons/22x22/edit-redo.png</file>
         <file>icons/22x22/edit-undo.png</file>
@@ -58,6 +62,8 @@
         <file>icons/32x32/document-open.png</file>
         <file>icons/32x32/document-save-as.png</file>
         <file>icons/32x32/document-save.png</file>
+        <file>icons/32x32/draw-freehand-lines.png</file>
+        <file>icons/32x32/draw-freehand-points.png</file>
         <file>icons/32x32/edit-clear.png</file>
         <file>icons/32x32/edit-redo.png</file>
         <file>icons/32x32/edit-undo.png</file>
@@ -80,6 +86,8 @@
         <file>icons/48x48/document-open.png</file>
         <file>icons/48x48/document-save-as.png</file>
         <file>icons/48x48/document-save.png</file>
+        <file>icons/48x48/draw-freehand-lines.png</file>
+        <file>icons/48x48/draw-freehand-points.png</file>
         <file>icons/48x48/edit-clear.png</file>
         <file>icons/48x48/edit-redo.png</file>
         <file>icons/48x48/edit-undo.png</file>

@@ -39,7 +39,7 @@
          <x>0</x>
          <y>0</y>
          <width>590</width>
-         <height>362</height>
+         <height>364</height>
         </rect>
        </property>
       </widget>
@@ -52,77 +52,100 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QVBoxLayout" name="paintModeVerticalLayout">
-         <property name="spacing">
-          <number>0</number>
+        <widget class="QWidget" name="paintModesWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <item>
-          <widget class="QToolButton" name="normalPaintToolButton">
-           <property name="toolTip">
-            <string>(1) Normal painting</string>
-           </property>
-           <property name="statusTip">
-            <string>(1) Normal painting</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources/icons.qrc">
-             <normaloff>:/icons/16x16/paint-normal.png</normaloff>:/icons/16x16/paint-normal.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="colorPaintToolButton">
-           <property name="toolTip">
-            <string>(2) Color painting only</string>
-           </property>
-           <property name="statusTip">
-            <string>(2) Color painting only</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources/icons.qrc">
-             <normaloff>:/icons/16x16/paint-color.png</normaloff>:/icons/16x16/paint-color.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QToolButton" name="characterPaintToolButton">
-           <property name="toolTip">
-            <string>(3) Character paiting only</string>
-           </property>
-           <property name="statusTip">
-            <string>(3) Character paiting only</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../resources/icons.qrc">
-             <normaloff>:/icons/16x16/paint-character.png</normaloff>:/icons/16x16/paint-character.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="autoExclusive">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+         <layout class="QVBoxLayout" name="paintModesVerticalLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="sizeConstraint">
+           <enum>QLayout::SetFixedSize</enum>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QToolButton" name="normalPaintToolButton">
+            <property name="toolTip">
+             <string>(1) Normal painting</string>
+            </property>
+            <property name="statusTip">
+             <string>(1) Normal painting</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources/icons.qrc">
+              <normaloff>:/icons/16x16/paint-normal.png</normaloff>:/icons/16x16/paint-normal.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="colorPaintToolButton">
+            <property name="toolTip">
+             <string>(2) Color painting only</string>
+            </property>
+            <property name="statusTip">
+             <string>(2) Color painting only</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources/icons.qrc">
+              <normaloff>:/icons/16x16/paint-color.png</normaloff>:/icons/16x16/paint-color.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="characterPaintToolButton">
+            <property name="toolTip">
+             <string>(3) Character paiting only</string>
+            </property>
+            <property name="statusTip">
+             <string>(3) Character paiting only</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources/icons.qrc">
+              <normaloff>:/icons/16x16/paint-character.png</normaloff>:/icons/16x16/paint-character.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
-        <spacer name="horizontalSpacer">
+        <spacer name="modeHorizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -139,6 +162,110 @@
        </item>
        <item>
         <widget class="PaletteWidget" name="paletteWidget" native="true"/>
+       </item>
+       <item>
+        <spacer name="toolHorizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>8</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QWidget" name="paintToolsWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <layout class="QGridLayout" name="paintToolsGridLayout">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetFixedSize</enum>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QToolButton" name="drawPointsToolButton">
+            <property name="toolTip">
+             <string>Draw points</string>
+            </property>
+            <property name="statusTip">
+             <string>Draw points</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources/icons.qrc">
+              <normaloff>:/icons/22x22/draw-freehand-points.png</normaloff>:/icons/22x22/draw-freehand-points.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QToolButton" name="drawLinesToolButton">
+            <property name="toolTip">
+             <string>Draw lines beween points</string>
+            </property>
+            <property name="statusTip">
+             <string>Draw lines beween points</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources/icons.qrc">
+              <normaloff>:/icons/22x22/draw-freehand-lines.png</normaloff>:/icons/22x22/draw-freehand-lines.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <spacer name="paletteHorizontalSpacer">

@@ -1,4 +1,4 @@
-# README #
+# TextPaint64 #
 
 TextPaint64 is a application for making Commodore 64 text mode graphics and
 editing them.
