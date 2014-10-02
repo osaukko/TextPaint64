@@ -19,7 +19,9 @@
 #include "mainwindow.h"
 #include "iconcache.h"
 #include <QtGui>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QtWidgets>
+#endif // Qt5
 
 // Public interface
 //--------------------------------------------------------------------------------------------------
@@ -473,7 +475,7 @@ bool MainWindow::loadProjectFile(const QString &fileName)
 
     QDataStream stream(&file);
     stream.setByteOrder(QDataStream::BigEndian);
-    stream.setVersion(QDataStream::Qt_5_0);
+    stream.setVersion(QDataStream::Qt_4_0);
 
     // Check header
     quint32 headerA, headerB;
@@ -608,7 +610,7 @@ bool MainWindow::saveProjectFile(const QString &fileName)
 
     QDataStream stream(&file);
     stream.setByteOrder(QDataStream::BigEndian);
-    stream.setVersion(QDataStream::Qt_5_0);
+    stream.setVersion(QDataStream::Qt_4_0);
 
     // Header
     stream << quint32(0x54503634)

@@ -18,7 +18,9 @@
 
 #include "charactereditor.h"
 #include <QtGui>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QtWidgets>
+#endif // Qt5
 
 static const int kWidth     = 8*32+9;   // 8 pixels, 32x scale, 9 borderlines (1px)
 static const int kHeight    = 8*32+9;   // 8 pixels, 32x scale, 9 borderlines (1px)

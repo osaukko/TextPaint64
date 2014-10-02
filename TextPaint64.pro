@@ -2,9 +2,12 @@ TEMPLATE = app
 
 TARGET = TextPaint64
 
-VERSION = 14.9
-REVISION = $$system(hg id -n)
+# Version number is last digits from year followed by month number.
+VERSION = 14.10
 DEFINES += APP_VERSION_STR=\\\"$$VERSION\\\"
+
+# Revision number from mercurial. Make sure that hg is available when running qmake.
+REVISION = $$system(hg id -n)
 DEFINES += APP_REVISION_STR=\\\"$$REVISION\\\"
 
 QT += \

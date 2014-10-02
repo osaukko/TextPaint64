@@ -19,7 +19,9 @@
 #include "palettewidget.h"
 #include "setbackgroundcommand.h"
 #include <QtGui>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QtWidgets>
+#endif // Qt5
 
 static const int kColorWidth        = 24;
 static const int kColorHeight       = 24;

@@ -1,8 +1,50 @@
 # README #
 
-TextPaint64 is a application for making Commodore 64 text mode graphics and editing them.
+TextPaint64 is a application for making Commodore 64 text mode graphics and
+editing them.
 
-### How do I get set up? ###
+## How do I get set up? ##
 
-You need Qt 5.x to compile this application. You can either open TextPaint64.pro file into Qt Creator application and compile it there.
-Or you can go to source folder in terminal application and run qmake and then make.
+This application is made by using Qt framework. Qt version 5.x is recommended
+choice but application should compile without problems with Qt 4.x versions
+too.
+
+### Building in Linux ###
+
+Install Qt development packages from repository provided by distribution of
+your choice. Other solution is download online installer from
+http://qt-project.org/downloads and use that, or download source code and
+compile Qt yourself.
+
+When you have Qt development enviroment ready, open your favorite terminal, go
+to source folder and give command qmake and then make. You can give argument
+-j *n* to speed up compile. *N* should be number of processor cores you have
+plus one.
+
+    $ cd TextPaint64
+    $ qmake
+    $ make -j5
+
+### Building in Windows ###
+
+1. Download and install Qt development tools from
+   http://qt-project.org/downloads.
+2. Open TextPaint64.pro file in Qt Creator.
+3. Press *Run*-button (Green play icon) to build and run application.
+
+### Building in Mac OS X ###
+
+1. Install Xcode.
+2. Install Command line tools (apparently not necessary in OS X 10.9 anymore)
+3. Download and install Qt development tools from 
+   http://qt-project.org/downloads.
+4. Open TextPaint64.pro file in Qt Creator.
+5. Press *Run*-button (Green play icon) to build and run application.
+
+## Note about mercurial ##
+
+Revision number is automatically got from **hg** command when you run qmake.
+Therefore hg command should be available on your system's *PATH*.
+If you get messages about missing hg command, this is what you need to fix.
+Application should compile correctly even without hg, but revision number will
+not show up on about dialog.

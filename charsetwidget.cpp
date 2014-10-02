@@ -17,10 +17,12 @@
  */
 
 #include "charsetwidget.h"
-#include <QtGui>
-#include <QtWidgets>
 #include "charactereditcommand.h"
 #include "charsetreplacecommand.h"
+#include <QtGui>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+#include <QtWidgets>
+#endif // Qt5
 
 static const int kWidth         = 16*17+1;
 static const int kHeight        = 16*17+1;
