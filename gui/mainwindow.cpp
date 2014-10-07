@@ -780,8 +780,8 @@ void MainWindow::setupConnections()
     // Draw tools
     connect(drawLinesToolButton,        SIGNAL(clicked()),
             screenWidget,               SLOT(setDrawLines()));
-    connect(drawPointsToolButton,       SIGNAL(clicked()),
-            screenWidget,               SLOT(setDrawPoints()));
+    connect(floodFillToolButton,        SIGNAL(clicked()),
+            screenWidget,               SLOT(setFloodFill()));
 
     // Modification updates
     connect(charsetWidget,  SIGNAL(charsetChanged()),                   SLOT(onModify()));
@@ -832,6 +832,10 @@ void MainWindow::setupIcons()
     // Help menu
     actionAboutTextPaint64->setIcon(iIconCache.textPaint64());
     actionAboutQt->setIcon(iIconCache.qtLogo());
+
+    // Palette
+    drawLinesToolButton->setIcon(iIconCache.drawFreehand());
+    floodFillToolButton->setIcon(iIconCache.fillColor());
 }
 
 void MainWindow::setupToolbars()

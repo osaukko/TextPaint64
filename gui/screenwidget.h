@@ -37,8 +37,8 @@ public:
         PaintBoth       = 0x03
     };
     enum PaintTool {
-        DrawPoints,
-        DrawLines
+        DrawLines,
+        FloodFill
     };
 
 public:
@@ -70,8 +70,8 @@ signals:
 
 public slots:
     void            setCursorPos(const QPoint &screenPos);
-    void            setDrawPoints();
     void            setDrawLines();
+    void            setFloodFill();
     void            setOverlayEnabled(bool enabled);
     void            setOverlayImageFile(const QString &fileName);
     void            setOverlayOpacity(qreal opacity);
@@ -100,10 +100,10 @@ private slots:
 
 private:
     QPixmap         characterPixmap(uchar color, uchar character);
-    void            drawAt(const QPoint &pos);
+    void            drawAt(const QPoint &pos, bool firstCall);
     void            drawCharacter(const QPoint &screenPos, uchar color, uchar character);
     void            drawLine(const QPoint &sp1, const QPoint &sp2, uchar color, uchar character);
-    void            eraseAt(const QPoint &pos);
+    void            eraseAt(const QPoint &pos, bool firstCall);
     bool            getScreenPosition(const QPoint &mousePos, QPoint &screenPos);
     void            paintChangedCharacters(uchar character);
     void            paintCursorPixmap();
@@ -119,6 +119,7 @@ private:
     ScanLines       m_colorLines;
     QPixmap         m_cursorPixmap;
     QPoint          m_cursorPixmapPos;
+    QCursor         m_floodFillCursor;
     bool            m_overlayEnabled;
     QString         m_overlayImageFileName;
     QPixmap         m_overlayPixmap;

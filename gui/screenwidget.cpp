@@ -33,6 +33,7 @@
 ScreenWidget::ScreenWidget(QWidget *parent)
     : QWidget(parent)
     , m_characterSize(16)
+    , m_floodFillCursor(QPixmap(":/icons/32x32/flood-fill-cursor.png"), 5, 26)
     , m_overlayEnabled(false)
     , m_overlayPixmapOpacity(0.5)
     , m_paintMode(PaintBoth)
@@ -236,14 +237,16 @@ void ScreenWidget::setCursorPos(const QPoint &pos)
         update(m_cursorPixmapPos.x(), m_cursorPixmapPos.y(), m_characterSize, m_characterSize);
 }
 
-void ScreenWidget::setDrawPoints()
-{
-    m_paintTool = DrawPoints;
-}
-
 void ScreenWidget::setDrawLines()
 {
     m_paintTool = DrawLines;
+    setCursor(Qt::CrossCursor);
+}
+
+void ScreenWidget::setFloodFill()
+{
+    m_paintTool = FloodFill;
+    setCursor(m_floodFillCursor);
 }
 
 void ScreenWidget::setOverlayEnabled(bool enabled)
@@ -394,9 +397,9 @@ void ScreenWidget::mouseMoveEvent(QMouseEvent *event)
     if (!m_paiting)
         return;
     if (event->buttons().testFlag(Qt::LeftButton)) {
-        drawAt(event->pos());
+        drawAt(event->pos(), false);
     } else if (event->buttons().testFlag(Qt::RightButton)) {
-        eraseAt(event->pos());
+        eraseAt(event->pos(), false);
     }
 }
 
@@ -413,13 +416,13 @@ void ScreenWidget::mousePressEvent(QMouseEvent *event)
         m_paiting = true;
         undoDataBegin(tr("screen paiting"));
         setCursorPos(QPoint());
-        drawAt(event->pos());
+        drawAt(event->pos(), true);
         break;
     case Qt::RightButton:
         m_paiting = true;
         undoDataBegin(tr("screen erase"));
         setCursorPos(QPoint());
-        eraseAt(event->pos());
+        eraseAt(event->pos(), true);
         break;
     default:
         break;
@@ -533,7 +536,7 @@ QPixmap ScreenWidget::characterPixmap(uchar color, uchar character)
     return m_characterPixmaps[color][character];
 }
 
-void ScreenWidget::drawAt(const QPoint &pos)
+void ScreenWidget::drawAt(const QPoint &pos, bool firstCall)
 {
     // Get character position
     QPoint screenPos;
@@ -543,13 +546,12 @@ void ScreenWidget::drawAt(const QPoint &pos)
     const uchar character = m_charsetWidget->selectedCharacterIndex();
     switch (m_paintTool) {
     case DrawLines:
+        if (firstCall)
+            drawCharacter(screenPos, color, character);
         if (m_screenPosBefore != screenPos) {
             drawLine(m_screenPosBefore, screenPos, color, character);
             m_screenPosBefore = screenPos;
         }
-        break;
-    case DrawPoints:
-        drawCharacter(screenPos, color, character);
         break;
     default:
         break;
@@ -627,7 +629,7 @@ void ScreenWidget::drawLine(const QPoint &p1, const QPoint &p2, uchar color, uch
     }
 }
 
-void ScreenWidget::eraseAt(const QPoint &pos)
+void ScreenWidget::eraseAt(const QPoint &pos, bool firstCall)
 {
     // Get character position
     QPoint screenPos;
@@ -637,13 +639,12 @@ void ScreenWidget::eraseAt(const QPoint &pos)
     const uchar character = 0;
     switch (m_paintTool) {
     case DrawLines:
+        if (firstCall)
+            drawCharacter(screenPos, color, character);
         if (m_screenPosBefore != screenPos) {
             drawLine(m_screenPosBefore, screenPos, color, character);
             m_screenPosBefore = screenPos;
         }
-        break;
-    case DrawPoints:
-        drawCharacter(screenPos, color, character);
         break;
     default:
         break;

@@ -207,16 +207,16 @@
            <number>0</number>
           </property>
           <item row="1" column="0">
-           <widget class="QToolButton" name="drawPointsToolButton">
+           <widget class="QToolButton" name="floodFillToolButton">
             <property name="toolTip">
-             <string>Draw points</string>
+             <string>Flood fill</string>
             </property>
             <property name="statusTip">
-             <string>Draw points</string>
+             <string>Flood fill</string>
             </property>
             <property name="icon">
              <iconset resource="../resources/icons.qrc">
-              <normaloff>:/icons/22x22/draw-freehand-points.png</normaloff>:/icons/22x22/draw-freehand-points.png</iconset>
+              <normaloff>:/icons/22x22/fill-color.png</normaloff>:/icons/22x22/fill-color.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -238,14 +238,14 @@
           <item row="0" column="0">
            <widget class="QToolButton" name="drawLinesToolButton">
             <property name="toolTip">
-             <string>Draw lines beween points</string>
+             <string>Draw lines</string>
             </property>
             <property name="statusTip">
-             <string>Draw lines beween points</string>
+             <string>Draw lines</string>
             </property>
             <property name="icon">
              <iconset resource="../resources/icons.qrc">
-              <normaloff>:/icons/22x22/draw-freehand-lines.png</normaloff>:/icons/22x22/draw-freehand-lines.png</iconset>
+              <normaloff>:/icons/22x22/draw-freehand.png</normaloff>:/icons/22x22/draw-freehand.png</iconset>
             </property>
             <property name="iconSize">
              <size>
