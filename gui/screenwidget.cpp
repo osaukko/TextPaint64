@@ -33,7 +33,7 @@
 ScreenWidget::ScreenWidget(QWidget *parent)
     : QWidget(parent)
     , m_characterSize(16)
-    , m_floodFillCursor(QPixmap(":/icons/32x32/flood-fill-cursor.png"), 5, 26)
+    , m_floodFillCursor(QPixmap(":/cursors/32x32/flood-fill-cursor.png"), 5, 26)
     , m_overlayEnabled(false)
     , m_overlayPixmapOpacity(0.5)
     , m_paintMode(PaintBoth)
@@ -553,6 +553,10 @@ void ScreenWidget::drawAt(const QPoint &pos, bool firstCall)
             m_screenPosBefore = screenPos;
         }
         break;
+    case FloodFill:
+        if (firstCall)
+            floodFill(screenPos, color, character);
+        break;
     default:
         break;
     }
@@ -646,8 +650,89 @@ void ScreenWidget::eraseAt(const QPoint &pos, bool firstCall)
             m_screenPosBefore = screenPos;
         }
         break;
+    case FloodFill:
+        if (firstCall)
+            floodFill(screenPos, color, character);
+        break;
     default:
         break;
+    }
+}
+
+void ScreenWidget::floodFill(const QPoint &screenPos, char color, char character)
+{
+    Q_ASSERT(screenPos.x() >= 0 && screenPos.x() < m_screenSize.width());
+    Q_ASSERT(screenPos.y() >= 0 && screenPos.y() < m_screenSize.height());
+
+    const char fillCharacter = m_characterLines[screenPos.y()][screenPos.x()];
+    const char fillColor = m_colorLines[screenPos.y()][screenPos.x()];
+
+    if (fillCharacter == character && fillColor == color)
+        return; // End result would be the same, no point to continue
+
+    QStack<QPoint> nodeStack;
+    nodeStack.push(screenPos);
+
+    while (!nodeStack.isEmpty()) {
+        QPoint pos = nodeStack.pop();
+        int &x = pos.rx();
+        int &y = pos.ry();
+
+        if (m_characterLines[y][x] != fillCharacter || m_colorLines[y][x] != fillColor)
+            continue;   // Move to next node if this point is already painted
+
+        // Move to left as much as possible, but don't paint yet
+        while (x > 0 && m_characterLines[y][x-1] == fillCharacter
+               && m_colorLines[y][x-1] == fillColor) {
+            x--;
+        }
+
+        bool maySpreadUp = true;
+        bool maySpreadDown = true;
+        while (x < m_screenSize.width() && m_characterLines[y][x] == fillCharacter
+               && m_colorLines[y][x] == fillColor) {
+            // Paint this cell
+            drawCharacter(pos, color, character);
+
+            // Check up direction
+            if (maySpreadUp) {
+                // Spread up?
+                if (y > 0 && m_characterLines[y-1][x] == fillCharacter
+                        && m_colorLines[y-1][x] == fillColor) {
+                    // Add new node to spread up
+                    nodeStack.push(QPoint(x, y-1));
+                    // Don't allow spawning of more nodes until there is non fillable cell
+                    maySpreadUp = false;
+                }
+            } else {
+                // Can we enable spawning to up again?
+                if (y > 0 && (m_characterLines[y-1][x] != fillCharacter
+                              || m_colorLines[y-1][x] != fillColor)) {
+                    maySpreadUp = true; // Yes we can.
+                }
+            }
+
+            // Check down direction
+            if (maySpreadDown) {
+                // Spread down?
+                if (y < m_screenSize.height() - 1 && m_characterLines[y+1][x] == fillCharacter
+                        && m_colorLines[y+1][x] == fillColor) {
+                    // Add new node to spread down
+                    nodeStack.push(QPoint(x, y+1));
+                    // Don't allow spawning of more nodes until there is non fillable cell
+                    maySpreadDown = false;
+                }
+            } else {
+                // Can we enable spawning to down again?
+                if (y < m_screenSize.height() - 1 && (m_characterLines[y+1][x] != fillCharacter
+                                                      || m_colorLines[y+1][x] != fillColor)) {
+                    maySpreadDown = true; // Yes we can.
+                }
+            }
+
+            // Move to next cell
+            ++x;
+        }
     }
 }
 

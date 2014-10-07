@@ -104,6 +104,7 @@ private:
     void            drawCharacter(const QPoint &screenPos, uchar color, uchar character);
     void            drawLine(const QPoint &sp1, const QPoint &sp2, uchar color, uchar character);
     void            eraseAt(const QPoint &pos, bool firstCall);
+    void            floodFill(const QPoint &screenPos, char color, char character);
     bool            getScreenPosition(const QPoint &mousePos, QPoint &screenPos);
     void            paintChangedCharacters(uchar character);
     void            paintCursorPixmap();

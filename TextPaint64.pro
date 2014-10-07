@@ -43,6 +43,7 @@ FORMS += \
 
 RESOURCES += \
     resources/charsets.qrc \
+    resources/cursors.qrc \
     resources/icons.qrc
 
 mac: ICON = resources/appicon.icns
