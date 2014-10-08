@@ -115,18 +115,18 @@ void MainWindow::onCharacterEditorAligment()
     Qt::Alignment alignment;
 
     // Horizontal
-    if (m_characterEditorAlignLeft->isChecked()) {
+    if (m_characterEditorAlignment[MenuAlignLeft]->isChecked()) {
         alignment = Qt::AlignLeft;
-    } else if (m_characterEditorAlignRight->isChecked()) {
+    } else if (m_characterEditorAlignment[MenuAlignRight]->isChecked()) {
         alignment = Qt::AlignRight;
     } else {
         alignment = Qt::AlignHCenter;
     }
 
     // Vertical
-    if (m_characterEditorAlignTop->isChecked()) {
+    if (m_characterEditorAlignment[MenuAlignTop]->isChecked()) {
         alignment |= Qt::AlignTop;
-    } else if (m_characterEditorAlignBottom->isChecked()) {
+    } else if (m_characterEditorAlignment[MenuAlignBottom]->isChecked()) {
         alignment |= Qt::AlignBottom;
     } else {
         alignment |= Qt::AlignVCenter;
@@ -577,6 +577,16 @@ bool MainWindow::okToContinue()
     return true;
 }
 
+void MainWindow::restoreAligmentMenu(Qt::Alignment alignment, QAction **alignmentActions)
+{
+    alignmentActions[MenuAlignLeft   ]->setChecked(alignment.testFlag(Qt::AlignLeft));
+    alignmentActions[MenuAlignHCenter]->setChecked(alignment.testFlag(Qt::AlignHCenter));
+    alignmentActions[MenuAlignRight  ]->setChecked(alignment.testFlag(Qt::AlignRight));
+    alignmentActions[MenuAlignTop    ]->setChecked(alignment.testFlag(Qt::AlignTop));
+    alignmentActions[MenuAlignVCenter]->setChecked(alignment.testFlag(Qt::AlignVCenter));
+    alignmentActions[MenuAlignBottom ]->setChecked(alignment.testFlag(Qt::AlignBottom));
+}
+
 void MainWindow::restoreSettings()
 {
     QSettings settings("The TextPaint64 Team", "TextPaint64");
@@ -603,12 +613,7 @@ void MainWindow::restoreSettings()
     settings.beginGroup("CharacterEditor");
     editorWidget->setAlignment(
                 static_cast<Qt::Alignment>(settings.value("alignment", Qt::AlignCenter).toUInt()));
-    m_characterEditorAlignLeft->setChecked(editorWidget->alignment().testFlag(Qt::AlignLeft));
-    m_characterEditorAlignHCenter->setChecked(editorWidget->alignment().testFlag(Qt::AlignHCenter));
-    m_characterEditorAlignRight->setChecked(editorWidget->alignment().testFlag(Qt::AlignRight));
-    m_characterEditorAlignTop->setChecked(editorWidget->alignment().testFlag(Qt::AlignTop));
-    m_characterEditorAlignVCenter->setChecked(editorWidget->alignment().testFlag(Qt::AlignVCenter));
-    m_characterEditorAlignBottom->setChecked(editorWidget->alignment().testFlag(Qt::AlignBottom));
+    restoreAligmentMenu(editorWidget->alignment(), m_characterEditorAlignment);
     settings.endGroup();
 
     settings.beginGroup("Screen");
@@ -751,6 +756,44 @@ void MainWindow::setOverlayImageFile(const QString &fileName)
     screenWidget->setOverlayImageFile(fileName);
 }
 
+void MainWindow::setupAlignmentMenu(QMenu *menu, QAction **alignmentActions,
+                                    const QObject *receiver, const char *method)
+{
+    // Create menu items
+    menu->addSection(tr("Horizontal"));
+    alignmentActions[MenuAlignLeft   ] = menu->addAction(tr("Left"));
+    alignmentActions[MenuAlignHCenter] = menu->addAction(tr("Center"));
+    alignmentActions[MenuAlignRight  ] = menu->addAction(tr("Right"));
+    menu->addSection(tr("Vertical"));
+    alignmentActions[MenuAlignTop    ] = menu->addAction(tr("Top"));
+    alignmentActions[MenuAlignVCenter] = menu->addAction(tr("Center"));
+    alignmentActions[MenuAlignBottom ] = menu->addAction(tr("Bottom"));
+
+    // Set icons
+    alignmentActions[MenuAlignLeft   ]->setIcon(iIconCache.alignLeft());
+    alignmentActions[MenuAlignHCenter]->setIcon(iIconCache.alignHCenter());
+    alignmentActions[MenuAlignRight  ]->setIcon(iIconCache.alignRight());
+    alignmentActions[MenuAlignTop    ]->setIcon(iIconCache.alignTop());
+    alignmentActions[MenuAlignVCenter]->setIcon(iIconCache.alignVCenter());
+    alignmentActions[MenuAlignBottom ]->setIcon(iIconCache.alignBottom());
+
+    // Setup menu items and connections
+    for (int i=0; i<6; ++i) {
+        alignmentActions[i]->setCheckable(true);
+        connect(alignmentActions[i], SIGNAL(triggered()), receiver, method);
+    }
+
+    // Create action groups
+    QActionGroup *horizontalGroup = new QActionGroup(this);
+    horizontalGroup->addAction(alignmentActions[MenuAlignLeft]);
+    horizontalGroup->addAction(alignmentActions[MenuAlignHCenter]);
+    horizontalGroup->addAction(alignmentActions[MenuAlignRight]);
+    QActionGroup *verticalGroup = new QActionGroup(this);
+    verticalGroup->addAction(alignmentActions[MenuAlignTop]);
+    verticalGroup->addAction(alignmentActions[MenuAlignVCenter]);
+    verticalGroup->addAction(alignmentActions[MenuAlignBottom]);
+}
+
 void MainWindow::setupCustomWidgets()
 {
     // Charset widget
@@ -775,12 +818,6 @@ void MainWindow::setupConnections()
     connect(actionFileSaveProject, SIGNAL(triggered()), SLOT(onSaveProject()));
     connect(actionFileSaveProjectAs, SIGNAL(triggered()), SLOT(onSaveProjectAs()));
     connect(actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-    connect(m_characterEditorAlignLeft, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
-    connect(m_characterEditorAlignHCenter, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
-    connect(m_characterEditorAlignRight, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
-    connect(m_characterEditorAlignTop, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
-    connect(m_characterEditorAlignVCenter, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
-    connect(m_characterEditorAlignBottom, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
 
     // Custom widgets
     connect(charsetWidget,  SIGNAL(currentCharacterChanged(QByteArray)),
@@ -972,29 +1009,9 @@ void MainWindow::setupUi()
         m_toolbarIconSizeGroup->addAction(iconSizeAction);
     }
 
-    // Setup character editor aligment menu
-    menuCharacterEditorAlignment->addSection(tr("Horizontal"));
-    m_characterEditorAlignLeft = menuCharacterEditorAlignment->addAction(tr("Left"));
-    m_characterEditorAlignHCenter= menuCharacterEditorAlignment->addAction(tr("Center"));
-    m_characterEditorAlignRight = menuCharacterEditorAlignment->addAction(tr("Right"));
-    m_characterEditorAlignLeft->setCheckable(true);
-    m_characterEditorAlignHCenter->setCheckable(true);
-    m_characterEditorAlignRight->setCheckable(true);
-    group = new QActionGroup(this);
-    group->addAction(m_characterEditorAlignLeft);
-    group->addAction(m_characterEditorAlignHCenter);
-    group->addAction(m_characterEditorAlignRight);
-    menuCharacterEditorAlignment->addSection(tr("Vertical"));
-    m_characterEditorAlignTop = menuCharacterEditorAlignment->addAction(tr("Top"));
-    m_characterEditorAlignVCenter= menuCharacterEditorAlignment->addAction(tr("Center"));
-    m_characterEditorAlignBottom = menuCharacterEditorAlignment->addAction(tr("Bottom"));
-    m_characterEditorAlignTop->setCheckable(true);
-    m_characterEditorAlignVCenter->setCheckable(true);
-    m_characterEditorAlignBottom->setCheckable(true);
-    group = new QActionGroup(this);
-    group->addAction(m_characterEditorAlignTop);
-    group->addAction(m_characterEditorAlignVCenter);
-    group->addAction(m_characterEditorAlignBottom);
+    // Setup alignment menus
+    setupAlignmentMenu(menuCharacterEditorAlignment, m_characterEditorAlignment,
+                       this, SLOT(onCharacterEditorAligment()));
 }
 
 QString MainWindow::strippedName(const QString &fullFileName)

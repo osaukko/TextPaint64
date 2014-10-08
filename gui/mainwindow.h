@@ -75,12 +75,15 @@ private:
     QToolButton     *createMenuToolButton(QMenu *menu);
     bool            loadProjectFile(const QString &fileName);
     bool            okToContinue();
+    void            restoreAligmentMenu(Qt::Alignment alignment, QAction **alignmentActions);
     void            restoreSettings();
     bool            saveProjectFile(const QString &fileName);
     void            saveSettings();
     void            setCurrentProjectFile(const QString &fileName);
     void            setToolbarIconSize(const QSize &size);
     void            setOverlayImageFile(const QString &fileName);
+    void            setupAlignmentMenu(QMenu *menu, QAction **alignmentActions,
+                                       const QObject *receiver, const char *method);
     void            setupCustomWidgets();
     void            setupConnections();
     void            setupIcons();
@@ -90,7 +93,16 @@ private:
     void            updateRecentFileActions();
 
 private:
+    enum {  // Aligment array indices
+        MenuAlignLeft       = 0,
+        MenuAlignHCenter    = 1,
+        MenuAlignRight      = 2,
+        MenuAlignTop        = 3,
+        MenuAlignVCenter    = 4,
+        MenuAlignBottom     = 5
+    };
     enum            { MaxRecentProjects =  8 };
+
     QString         m_charsetDir;
     QString         m_currentProjectFile;
     QString         m_overlayDir;
@@ -99,12 +111,7 @@ private:
     QString         m_screenDir;
 
     QToolButton     *m_builtInCharsetToolButton;
-    QAction         *m_characterEditorAlignBottom;
-    QAction         *m_characterEditorAlignHCenter;
-    QAction         *m_characterEditorAlignLeft;
-    QAction         *m_characterEditorAlignRight;
-    QAction         *m_characterEditorAlignTop;
-    QAction         *m_characterEditorAlignVCenter;
+    QAction         *m_characterEditorAlignment[6];
     QToolButton     *m_hiResTextModeToolButton;
     QToolButton     *m_pixelScalingToolButton;
     QAction         *m_recentProjectActions[MaxRecentProjects];

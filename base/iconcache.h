@@ -74,6 +74,12 @@
  */
 class IconCache
 {
+    CACHEICON(alignBottom,              "align-bottom.png")
+    CACHEICON(alignHCenter,             "align-hcenter.png")
+    CACHEICON(alignLeft,                "align-left.png")
+    CACHEICON(alignRight,               "align-right.png")
+    CACHEICON(alignTop,                 "align-top.png")
+    CACHEICON(alignVCenter,             "align-vcenter.png")
     CACHEICON(applicationExit,          "application-exit.png")
     CACHEICON(charsetDocumentOpen,      "charset-document-open.png")
     CACHEICON(charsetDocumentSaveAs,    "charset-document-save-as.png")

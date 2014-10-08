@@ -1,5 +1,12 @@
 <RCC>
     <qresource prefix="/">
+        <file>icons/128x128/text-paint-64.png</file>
+        <file>icons/16x16/align-bottom.png</file>
+        <file>icons/16x16/align-hcenter.png</file>
+        <file>icons/16x16/align-left.png</file>
+        <file>icons/16x16/align-right.png</file>
+        <file>icons/16x16/align-top.png</file>
+        <file>icons/16x16/align-vcenter.png</file>
         <file>icons/16x16/application-exit.png</file>
         <file>icons/16x16/charset-document-open.png</file>
         <file>icons/16x16/charset-document-save-as.png</file>
@@ -15,6 +22,7 @@
         <file>icons/16x16/edit-clear.png</file>
         <file>icons/16x16/edit-redo.png</file>
         <file>icons/16x16/edit-undo.png</file>
+        <file>icons/16x16/fill-color.png</file>
         <file>icons/16x16/media-flash.png</file>
         <file>icons/16x16/page-zoom.png</file>
         <file>icons/16x16/paint-character.png</file>
@@ -26,7 +34,12 @@
         <file>icons/16x16/text-paint-64.png</file>
         <file>icons/16x16/view-form.png</file>
         <file>icons/16x16/view-grid.png</file>
-        <file>icons/16x16/fill-color.png</file>
+        <file>icons/22x22/align-bottom.png</file>
+        <file>icons/22x22/align-hcenter.png</file>
+        <file>icons/22x22/align-left.png</file>
+        <file>icons/22x22/align-right.png</file>
+        <file>icons/22x22/align-top.png</file>
+        <file>icons/22x22/align-vcenter.png</file>
         <file>icons/22x22/application-exit.png</file>
         <file>icons/22x22/charset-document-open.png</file>
         <file>icons/22x22/charset-document-save-as.png</file>
@@ -51,6 +64,13 @@
         <file>icons/22x22/text-paint-64.png</file>
         <file>icons/22x22/view-form.png</file>
         <file>icons/22x22/view-grid.png</file>
+        <file>icons/256x256/text-paint-64.png</file>
+        <file>icons/32x32/align-bottom.png</file>
+        <file>icons/32x32/align-hcenter.png</file>
+        <file>icons/32x32/align-left.png</file>
+        <file>icons/32x32/align-right.png</file>
+        <file>icons/32x32/align-top.png</file>
+        <file>icons/32x32/align-vcenter.png</file>
         <file>icons/32x32/application-exit.png</file>
         <file>icons/32x32/charset-document-open.png</file>
         <file>icons/32x32/charset-document-save-as.png</file>
@@ -75,6 +95,12 @@
         <file>icons/32x32/text-paint-64.png</file>
         <file>icons/32x32/view-form.png</file>
         <file>icons/32x32/view-grid.png</file>
+        <file>icons/48x48/align-bottom.png</file>
+        <file>icons/48x48/align-hcenter.png</file>
+        <file>icons/48x48/align-left.png</file>
+        <file>icons/48x48/align-right.png</file>
+        <file>icons/48x48/align-top.png</file>
+        <file>icons/48x48/align-vcenter.png</file>
         <file>icons/48x48/application-exit.png</file>
         <file>icons/48x48/charset-document-open.png</file>
         <file>icons/48x48/charset-document-save-as.png</file>
@@ -99,9 +125,7 @@
         <file>icons/48x48/text-paint-64.png</file>
         <file>icons/48x48/view-form.png</file>
         <file>icons/48x48/view-grid.png</file>
-        <file>icons/64x64/text-paint-64.png</file>
-        <file>icons/128x128/text-paint-64.png</file>
-        <file>icons/256x256/text-paint-64.png</file>
         <file>icons/512x512/text-paint-64.png</file>
+        <file>icons/64x64/text-paint-64.png</file>
     </qresource>
 </RCC>
