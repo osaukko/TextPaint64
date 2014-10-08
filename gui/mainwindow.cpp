@@ -760,11 +760,17 @@ void MainWindow::setupAlignmentMenu(QMenu *menu, QAction **alignmentActions,
                                     const QObject *receiver, const char *method)
 {
     // Create menu items
-    menu->addSection(tr("Horizontal"));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    menu->addSection(tr("Horizontal")); // Qt5 feature
+#endif
     alignmentActions[MenuAlignLeft   ] = menu->addAction(tr("Left"));
     alignmentActions[MenuAlignHCenter] = menu->addAction(tr("Center"));
     alignmentActions[MenuAlignRight  ] = menu->addAction(tr("Right"));
-    menu->addSection(tr("Vertical"));
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    menu->addSection(tr("Vertical"));   // Qt5 feature
+#else
+    menu->addSeparator();               // Using separator on Qt4
+#endif
     alignmentActions[MenuAlignTop    ] = menu->addAction(tr("Top"));
     alignmentActions[MenuAlignVCenter] = menu->addAction(tr("Center"));
     alignmentActions[MenuAlignBottom ] = menu->addAction(tr("Bottom"));
