@@ -39,6 +39,7 @@ protected:
 
 private slots:
     void            onChangeIconSize();
+    void            onCharacterEditorAligment();
     void            onCharacterUndoCommandReady();
     void            onLoadBuiltIn();
     void            onModify();
@@ -98,6 +99,12 @@ private:
     QString         m_screenDir;
 
     QToolButton     *m_builtInCharsetToolButton;
+    QAction         *m_characterEditorAlignBottom;
+    QAction         *m_characterEditorAlignHCenter;
+    QAction         *m_characterEditorAlignLeft;
+    QAction         *m_characterEditorAlignRight;
+    QAction         *m_characterEditorAlignTop;
+    QAction         *m_characterEditorAlignVCenter;
     QToolButton     *m_hiResTextModeToolButton;
     QToolButton     *m_pixelScalingToolButton;
     QAction         *m_recentProjectActions[MaxRecentProjects];

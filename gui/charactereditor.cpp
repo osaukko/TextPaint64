@@ -24,9 +24,6 @@
 #include <QtWidgets>
 #endif // Qt5
 
-static const int kWidth     = 8*32+9;   // 8 pixels, 32x scale, 9 borderlines (1px)
-static const int kHeight    = 8*32+9;   // 8 pixels, 32x scale, 9 borderlines (1px)
-
 // Binary masks for pixel access.
 static const uchar kGetSetMask[8]   = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
 static const uchar kClearMask[8]    = { 0x7f, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd, 0xfe };
@@ -38,12 +35,17 @@ CharacterEditor::CharacterEditor(QWidget *parent)
     : QWidget(parent)
     , m_backgroundColor(Qt::black)
     , m_characterData(8, 0)
-    , m_characterPixmap(kWidth, kHeight)
     , m_foregroundColor(Qt::white)
     , m_paiting(false)
+    , m_pixelSize(0)
     , m_updateFull(true)
 {
-    setFixedSize(kWidth, kHeight);
+    setMinimumSize(minimumSizeHint());
+}
+
+Qt::Alignment CharacterEditor::alignment() const
+{
+    return m_alignment;
 }
 
 QColor CharacterEditor::backgroundColor() const
@@ -54,6 +56,26 @@ QColor CharacterEditor::backgroundColor() const
 QColor CharacterEditor::foregroundColor() const
 {
     return m_foregroundColor;
+}
+
+void CharacterEditor::setAlignment(Qt::Alignment alignment)
+{
+    if (m_alignment == alignment)
+        return;
+    m_alignment = alignment;
+    updateOffset();
+}
+
+QSize CharacterEditor::minimumSizeHint() const
+{
+    const int dimension = 4 * 8 + 9;    // 4x4 points per pixel and one pixel grid lines.
+    return QSize(dimension, dimension);
+}
+
+QSize CharacterEditor::sizeHint() const
+{
+    const int dimension = 32 * 8 + 9;   // 32x32 points per pixel and one pixel grid lines:
+    return QSize(dimension, dimension);
 }
 
 // Public slots
@@ -131,7 +153,23 @@ void CharacterEditor::paintEvent(QPaintEvent *event)
         paintFullPixmap();
 
     QPainter p(this);
-    p.drawPixmap(0, 0, m_characterPixmap);
+    p.drawPixmap(m_characterPixmapOffset, m_characterPixmap);
+}
+
+void CharacterEditor::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+
+    // Calculating optimal pixel size
+    const int minDimension = qMin(event->size().width(), event->size().height());
+    const int pixelSize = (minDimension - 9) / 8;
+    if (m_pixelSize != pixelSize) {
+        const int dimension = pixelSize * 8 + 9;
+        m_pixelSize = pixelSize;
+        m_characterPixmap = QPixmap(dimension, dimension);
+        updateFullPixmap();
+    }
+    updateOffset();
 }
 
 // Private interface
@@ -142,9 +180,11 @@ void CharacterEditor::paintFullPixmap()
     m_characterPixmap.fill(Qt::black);
     QPainter p(&m_characterPixmap);
 
+    const int cellSize = m_pixelSize + 1;
+
     for (int y=0; y<8; ++y) {
         for (int x=0; x<8; ++x) {
-        p.fillRect(x*33+1, y*33+1, 32, 32,
+        p.fillRect(x * cellSize + 1, y * cellSize + 1, m_pixelSize, m_pixelSize,
                    (m_characterData[y] & kGetSetMask[x])
                    ? m_foregroundColor
                    : m_backgroundColor);
@@ -156,32 +196,39 @@ void CharacterEditor::paintFullPixmap()
 
 void CharacterEditor::mouseClick(const QPoint &pos, bool leftButton)
 {
-    if (pos.x() % 33 == 0 || pos.y() % 33 == 0)
+    const QPoint pixmapPos = pos - m_characterPixmapOffset;
+    const int cellSize = m_pixelSize + 1;
+
+    if (pixmapPos.x() % cellSize == 0 || pixmapPos.y() % cellSize == 0)
         return; // Border lines
 
-    int x = pos.x() / 33;
-    int y = pos.y() / 33;
+    const int x = pixmapPos.x() / cellSize;
+    const int y = pixmapPos.y() / cellSize;
     if (x < 0 || x > 7 || y < 0 || y > 7)
         return; // Invalid indices.
 
     setPixel(x, y, leftButton);
 }
 
-void CharacterEditor::setPixel(int x, int y, bool lit)
+void CharacterEditor::setPixel(int x, int y, bool enabled)
 {
     if (x<0 || x>7 || y<0 || y>7)
         return;
-    if (bool(m_characterData[y] & kGetSetMask[x]) == lit)
+    if (bool(m_characterData[y] & kGetSetMask[x]) == enabled)
         return;
 
-    if (lit)
+    if (enabled)
         m_characterData.data()[y] |= kGetSetMask[x];
     else
         m_characterData.data()[y] &= kClearMask[x];
 
-    QRect updateArea(x*33+1, y*33+1, 32, 32);
+    const int cellSize = m_pixelSize + 1;
+    QRect updateArea(x * cellSize + 1, y * cellSize + 1, m_pixelSize, m_pixelSize);
     QPainter p(&m_characterPixmap);
-    p.fillRect(updateArea, lit ? m_foregroundColor : m_backgroundColor);
+    p.fillRect(updateArea, enabled ? m_foregroundColor : m_backgroundColor);
+
+    // Translate update area for widget update
+    updateArea.translate(m_characterPixmapOffset);
     update(updateArea);
 
     emit characterDataChanged(m_characterData);
@@ -190,5 +237,28 @@ void CharacterEditor::setPixel(int x, int y, bool lit)
 void CharacterEditor::updateFullPixmap()
 {
     m_updateFull = true;
+    update();
+}
+
+void CharacterEditor::updateOffset()
+{
+    // Horizontal alignment
+    if (m_alignment.testFlag(Qt::AlignLeft)) {
+        m_characterPixmapOffset.setX(0);
+    } else if (m_alignment.testFlag(Qt::AlignRight)) {
+        m_characterPixmapOffset.setX(width() - m_characterPixmap.width());
+    } else {
+        m_characterPixmapOffset.setX((width() - m_characterPixmap.width()) * 0.5);
+    }
+
+    // Vertical alignment
+    if (m_alignment.testFlag(Qt::AlignTop)) {
+        m_characterPixmapOffset.setY(0);
+    } else if (m_alignment.testFlag(Qt::AlignBottom)) {
+        m_characterPixmapOffset.setY(height() - m_characterPixmap.height());
+    } else {
+        m_characterPixmapOffset.setY((height() - m_characterPixmap.height()) * 0.5);
+    }
+
     update();
 }

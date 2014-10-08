@@ -110,6 +110,31 @@ void MainWindow::onChangeIconSize()
         setToolbarIconSize(action->data().toSize());
 }
 
+void MainWindow::onCharacterEditorAligment()
+{
+    Qt::Alignment alignment;
+
+    // Horizontal
+    if (m_characterEditorAlignLeft->isChecked()) {
+        alignment = Qt::AlignLeft;
+    } else if (m_characterEditorAlignRight->isChecked()) {
+        alignment = Qt::AlignRight;
+    } else {
+        alignment = Qt::AlignHCenter;
+    }
+
+    // Vertical
+    if (m_characterEditorAlignTop->isChecked()) {
+        alignment |= Qt::AlignTop;
+    } else if (m_characterEditorAlignBottom->isChecked()) {
+        alignment |= Qt::AlignBottom;
+    } else {
+        alignment |= Qt::AlignVCenter;
+    }
+
+    editorWidget->setAlignment(alignment);
+}
+
 void MainWindow::onCharacterUndoCommandReady()
 {
     m_undoStack->push(charsetWidget->createUndoCommand());
@@ -575,6 +600,17 @@ void MainWindow::restoreSettings()
     }
     settings.endGroup();
 
+    settings.beginGroup("CharacterEditor");
+    editorWidget->setAlignment(
+                static_cast<Qt::Alignment>(settings.value("alignment", Qt::AlignCenter).toUInt()));
+    m_characterEditorAlignLeft->setChecked(editorWidget->alignment().testFlag(Qt::AlignLeft));
+    m_characterEditorAlignHCenter->setChecked(editorWidget->alignment().testFlag(Qt::AlignHCenter));
+    m_characterEditorAlignRight->setChecked(editorWidget->alignment().testFlag(Qt::AlignRight));
+    m_characterEditorAlignTop->setChecked(editorWidget->alignment().testFlag(Qt::AlignTop));
+    m_characterEditorAlignVCenter->setChecked(editorWidget->alignment().testFlag(Qt::AlignVCenter));
+    m_characterEditorAlignBottom->setChecked(editorWidget->alignment().testFlag(Qt::AlignBottom));
+    settings.endGroup();
+
     settings.beginGroup("Screen");
     screenWidget->setPixelScaling(settings.value("pixelScaling", 2).toInt());
     QString scalingText = QString("%1x").arg(screenWidget->pixelScaling());
@@ -662,6 +698,10 @@ void MainWindow::saveSettings()
     settings.setValue("toolbarIconSize", fileToolBar->iconSize());
     settings.endGroup();
 
+    settings.beginGroup("CharacterEditor");
+    settings.setValue("alignment", static_cast<quint32>(editorWidget->alignment()));
+    settings.endGroup();
+
     settings.beginGroup("Screen");
     settings.setValue("pixelScaling", screenWidget->pixelScaling());
     settings.endGroup();
@@ -721,7 +761,6 @@ void MainWindow::setupCustomWidgets()
     // Editor widget
     editorWidget->setBackgroundColor(paletteWidget->backgroundColor());
     editorWidget->setForegroundColor(paletteWidget->foregroundColor());
-    editorVerticalLayout->setAlignment(editorWidget, Qt::AlignCenter);
 
     // Screen widget
     screenWidget->setCharsetWidget(charsetWidget);
@@ -736,6 +775,12 @@ void MainWindow::setupConnections()
     connect(actionFileSaveProject, SIGNAL(triggered()), SLOT(onSaveProject()));
     connect(actionFileSaveProjectAs, SIGNAL(triggered()), SLOT(onSaveProjectAs()));
     connect(actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    connect(m_characterEditorAlignLeft, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
+    connect(m_characterEditorAlignHCenter, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
+    connect(m_characterEditorAlignRight, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
+    connect(m_characterEditorAlignTop, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
+    connect(m_characterEditorAlignVCenter, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
+    connect(m_characterEditorAlignBottom, SIGNAL(triggered()), SLOT(onCharacterEditorAligment()));
 
     // Custom widgets
     connect(charsetWidget,  SIGNAL(currentCharacterChanged(QByteArray)),
@@ -926,6 +971,30 @@ void MainWindow::setupUi()
         menuIconSize->addAction(iconSizeAction);
         m_toolbarIconSizeGroup->addAction(iconSizeAction);
     }
+
+    // Setup character editor aligment menu
+    menuCharacterEditorAlignment->addSection(tr("Horizontal"));
+    m_characterEditorAlignLeft = menuCharacterEditorAlignment->addAction(tr("Left"));
+    m_characterEditorAlignHCenter= menuCharacterEditorAlignment->addAction(tr("Center"));
+    m_characterEditorAlignRight = menuCharacterEditorAlignment->addAction(tr("Right"));
+    m_characterEditorAlignLeft->setCheckable(true);
+    m_characterEditorAlignHCenter->setCheckable(true);
+    m_characterEditorAlignRight->setCheckable(true);
+    group = new QActionGroup(this);
+    group->addAction(m_characterEditorAlignLeft);
+    group->addAction(m_characterEditorAlignHCenter);
+    group->addAction(m_characterEditorAlignRight);
+    menuCharacterEditorAlignment->addSection(tr("Vertical"));
+    m_characterEditorAlignTop = menuCharacterEditorAlignment->addAction(tr("Top"));
+    m_characterEditorAlignVCenter= menuCharacterEditorAlignment->addAction(tr("Center"));
+    m_characterEditorAlignBottom = menuCharacterEditorAlignment->addAction(tr("Bottom"));
+    m_characterEditorAlignTop->setCheckable(true);
+    m_characterEditorAlignVCenter->setCheckable(true);
+    m_characterEditorAlignBottom->setCheckable(true);
+    group = new QActionGroup(this);
+    group->addAction(m_characterEditorAlignTop);
+    group->addAction(m_characterEditorAlignVCenter);
+    group->addAction(m_characterEditorAlignBottom);
 }
 
 QString MainWindow::strippedName(const QString &fullFileName)

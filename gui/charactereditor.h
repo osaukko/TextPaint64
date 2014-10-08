@@ -29,8 +29,15 @@ class CharacterEditor : public QWidget
 
 public:
     explicit        CharacterEditor(QWidget *parent = 0);
+
+    Qt::Alignment   alignment() const;
     QColor          backgroundColor() const;
     QColor          foregroundColor() const;
+    void            setAlignment(Qt::Alignment alignment);
+
+public:
+    virtual QSize   minimumSizeHint() const;
+    virtual QSize   sizeHint() const;
 
 signals:
     void            characterDataChanged(const QByteArray &data);
@@ -47,19 +54,24 @@ protected:
     virtual void    mousePressEvent(QMouseEvent *event);
     virtual void    mouseReleaseEvent(QMouseEvent *event);
     virtual void    paintEvent(QPaintEvent *event);
+    virtual void    resizeEvent(QResizeEvent *event);
 
 private:
     void            paintFullPixmap();
     void            mouseClick(const QPoint &pos, bool leftButton);
-    void            setPixel(int x, int y, bool lit);
+    void            setPixel(int x, int y, bool enabled);
     void            updateFullPixmap();
+    void            updateOffset();
 
 private:
+    Qt::Alignment   m_alignment;
     QColor          m_backgroundColor;
     QByteArray      m_characterData;
     QPixmap         m_characterPixmap;
+    QPoint          m_characterPixmapOffset;
     QColor          m_foregroundColor;
     bool            m_paiting;
+    int             m_pixelSize;
     bool            m_updateFull;
 };
 
