@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>cursors/32x32/crosshair.png</file>
         <file>cursors/32x32/flood-fill-cursor.png</file>
     </qresource>
 </RCC>

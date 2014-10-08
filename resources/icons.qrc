@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/128x128/text-paint-64.png</file>
         <file>icons/16x16/align-bottom.png</file>
         <file>icons/16x16/align-hcenter.png</file>
         <file>icons/16x16/align-left.png</file>
@@ -64,7 +63,6 @@
         <file>icons/22x22/text-paint-64.png</file>
         <file>icons/22x22/view-form.png</file>
         <file>icons/22x22/view-grid.png</file>
-        <file>icons/256x256/text-paint-64.png</file>
         <file>icons/32x32/align-bottom.png</file>
         <file>icons/32x32/align-hcenter.png</file>
         <file>icons/32x32/align-left.png</file>
@@ -125,7 +123,9 @@
         <file>icons/48x48/text-paint-64.png</file>
         <file>icons/48x48/view-form.png</file>
         <file>icons/48x48/view-grid.png</file>
-        <file>icons/512x512/text-paint-64.png</file>
         <file>icons/64x64/text-paint-64.png</file>
+        <file>icons/128x128/text-paint-64.png</file>
+        <file>icons/256x256/text-paint-64.png</file>
+        <file>icons/512x512/text-paint-64.png</file>
     </qresource>
 </RCC>

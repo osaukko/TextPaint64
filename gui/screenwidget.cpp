@@ -33,6 +33,7 @@
 ScreenWidget::ScreenWidget(QWidget *parent)
     : QWidget(parent)
     , m_characterSize(16)
+    , m_crosshairCursor(QPixmap(":/cursors/32x32/crosshair.png"), 15, 15)
     , m_floodFillCursor(QPixmap(":/cursors/32x32/flood-fill-cursor.png"), 5, 26)
     , m_overlayEnabled(false)
     , m_overlayPixmapOpacity(0.5)
@@ -45,7 +46,7 @@ ScreenWidget::ScreenWidget(QWidget *parent)
 {
     setScreenSize(QSize(40, 25));
     setMouseTracking(true);
-    setCursor(Qt::CrossCursor);
+    setCursor(m_crosshairCursor);
 }
 
 QByteArray ScreenWidget::colorData() const
@@ -240,7 +241,7 @@ void ScreenWidget::setCursorPos(const QPoint &pos)
 void ScreenWidget::setDrawLines()
 {
     m_paintTool = DrawLines;
-    setCursor(Qt::CrossCursor);
+    setCursor(m_crosshairCursor);
 }
 
 void ScreenWidget::setFloodFill()

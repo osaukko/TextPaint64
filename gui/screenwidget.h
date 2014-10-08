@@ -118,6 +118,7 @@ private:
     QPixmap         m_characterPixmaps[16][256];    // 16 Colors with all 256 characters
     int             m_characterSize;                // Dimensions of paintable character pixmaps
     ScanLines       m_colorLines;
+    QCursor         m_crosshairCursor;
     QPixmap         m_cursorPixmap;
     QPoint          m_cursorPixmapPos;
     QCursor         m_floodFillCursor;
