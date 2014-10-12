@@ -319,6 +319,23 @@ void MainWindow::on_actionCharsetSaveAs_triggered()
     statusbar->showMessage(tr("Charset saved"), 3000);
 }
 
+void MainWindow::on_actionResetSettings_triggered()
+{
+    if (!okToContinue())
+        return;
+    if (QMessageBox::question(this, tr("Reset settings"),
+                              tr("All the settings for this application will be restored back to "
+                                 "defaults and application will then restart.\n\n"
+                                 "Continue?"),
+                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No)
+            == QMessageBox::Yes)
+    {
+        QSettings settings("The TextPaint64 Team", "TextPaint64");
+        settings.clear();
+        qApp->exit(Restart);
+    }
+}
+
 void MainWindow::on_actionScreenMode38x24_triggered()
 {
     screenWidget->setScreenSize(QSize(38, 24));
@@ -1042,6 +1059,7 @@ void MainWindow::setupWindowMenu()
     menuDocks->setIcon(iIconCache.viewForm());
     menuToolbars->setIcon(iIconCache.configureToolbars());
     m_characterEditorGrid->setIcon(iIconCache.viewGrid());
+    actionResetSettings->setIcon(iIconCache.documentRevert());
 
     // Connections
     connect(m_characterEditorGrid, SIGNAL(toggled(bool)), editorWidget, SLOT(setShowGrid(bool)));

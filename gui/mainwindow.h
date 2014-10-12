@@ -30,6 +30,9 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
     Q_OBJECT
 
 public:
+    enum { Restart = 8 };
+
+public:
     explicit        MainWindow(QWidget *parent = 0);
 
 protected:
@@ -58,6 +61,7 @@ private slots:
     void            on_actionCharsetClear_triggered();
     void            on_actionCharsetOpenFile_triggered();
     void            on_actionCharsetSaveAs_triggered();
+    void            on_actionResetSettings_triggered();
     void            on_actionScreenMode38x24_triggered();
     void            on_actionScreenMode38x25_triggered();
     void            on_actionScreenMode40x24_triggered();

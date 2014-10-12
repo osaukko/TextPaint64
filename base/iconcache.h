@@ -89,6 +89,7 @@ class IconCache
     CACHEICON(documentNew,              "document-new.png")
     CACHEICON(documentOpenRecent,       "document-open-recent.png")
     CACHEICON(documentOpen,             "document-open.png")
+    CACHEICON(documentRevert,           "document-revert.png")
     CACHEICON(documentSaveAs,           "document-save-as.png")
     CACHEICON(documentSave,             "document-save.png")
     CACHEICON(drawFreehand,             "draw-freehand.png")

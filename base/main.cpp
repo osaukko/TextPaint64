@@ -17,12 +17,17 @@
  */
 
 #include <QApplication>
+#include <QScopedPointer>
 #include "gui/mainwindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    MainWindow win;
-    win.show();
-    return app.exec();
+    int exitCode;
+    do {
+        QScopedPointer<MainWindow> win(new MainWindow);
+        win->show();
+        exitCode = app.exec();
+    } while (exitCode == MainWindow::Restart);
+    return exitCode;
 }

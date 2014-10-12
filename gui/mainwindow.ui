@@ -361,6 +361,8 @@
     <addaction name="menuToolbars"/>
     <addaction name="separator"/>
     <addaction name="menuCharacterEditor"/>
+    <addaction name="separator"/>
+    <addaction name="actionResetSettings"/>
    </widget>
    <widget class="QMenu" name="menuScreen">
     <property name="title">
@@ -1060,6 +1062,15 @@
    </property>
    <property name="toolTip">
     <string notr="true">4x</string>
+   </property>
+  </action>
+  <action name="actionResetSettings">
+   <property name="icon">
+    <iconset resource="../resources/icons.qrc">
+     <normaloff>:/icons/16x16/document-revert.png</normaloff>:/icons/16x16/document-revert.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset settings</string>
    </property>
   </action>
  </widget>
