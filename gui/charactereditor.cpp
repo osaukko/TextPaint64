@@ -38,8 +38,10 @@ CharacterEditor::CharacterEditor(QWidget *parent)
     , m_foregroundColor(Qt::white)
     , m_paiting(false)
     , m_pixelSize(0)
+    , m_showGrid(true)
     , m_updateFull(true)
 {
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     setMinimumSize(minimumSizeHint());
 }
 
@@ -66,16 +68,19 @@ void CharacterEditor::setAlignment(Qt::Alignment alignment)
     updateOffset();
 }
 
+bool CharacterEditor::showGrid() const
+{
+    return m_showGrid;
+}
+
 QSize CharacterEditor::minimumSizeHint() const
 {
-    const int dimension = 4 * 8 + 9;    // 4x4 points per pixel and one pixel grid lines.
-    return QSize(dimension, dimension);
+    return optimalSize(4);
 }
 
 QSize CharacterEditor::sizeHint() const
 {
-    const int dimension = 32 * 8 + 9;   // 32x32 points per pixel and one pixel grid lines:
-    return QSize(dimension, dimension);
+    return optimalSize(32);
 }
 
 // Public slots
@@ -106,23 +111,36 @@ void CharacterEditor::setForegroundColor(const QColor &foregroundColor)
     updateFullPixmap();
 }
 
+void CharacterEditor::setShowGrid(bool show)
+{
+    if (m_showGrid == show)
+        return;
+    m_showGrid = show;
+    setMinimumSize(minimumSizeHint());
+    resizePixmap(size());
+}
+
 // Protected interface
 //----------------------------------------------------------------------------------------------------------------------
 
+void CharacterEditor::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    event->accept();
+}
+
 void CharacterEditor::mouseMoveEvent(QMouseEvent *event)
 {
-    QWidget::mouseMoveEvent(event);
     if (!m_paiting)
         return;
     if (event->buttons().testFlag(Qt::LeftButton))
         mouseClick(event->pos(), true);
     else if (event->buttons().testFlag(Qt::RightButton))
         mouseClick(event->pos(), false);
+    event->accept();
 }
 
 void CharacterEditor::mousePressEvent(QMouseEvent *event)
 {
-    QWidget::mousePressEvent(event);
     if (m_paiting)
         return;
     if (event->buttons().testFlag(Qt::LeftButton)) {
@@ -134,15 +152,16 @@ void CharacterEditor::mousePressEvent(QMouseEvent *event)
         m_paiting = true;
         mouseClick(event->pos(), false);
     }
+    event->accept();
 }
 
 void CharacterEditor::mouseReleaseEvent(QMouseEvent *event)
 {
-    QWidget::mouseReleaseEvent(event);
     if (m_paiting) {
         m_paiting = false;
         emit editEnd();
     }
+    event->accept();
 }
 
 void CharacterEditor::paintEvent(QPaintEvent *event)
@@ -159,29 +178,43 @@ void CharacterEditor::paintEvent(QPaintEvent *event)
 void CharacterEditor::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-
-    // Calculating optimal pixel size
-    const int minDimension = qMin(event->size().width(), event->size().height());
-    const int pixelSize = (minDimension - 9) / 8;
-    if (m_pixelSize != pixelSize) {
-        const int dimension = pixelSize * 8 + 9;
-        m_pixelSize = pixelSize;
-        m_characterPixmap = QPixmap(dimension, dimension);
-        updateFullPixmap();
-    }
-    updateOffset();
+    resizePixmap(event->size());
 }
 
 // Private interface
 //----------------------------------------------------------------------------------------------------------------------
+
+void CharacterEditor::mouseClick(const QPoint &pos, bool leftButton)
+{
+    const QPoint pixmapPos = pos - m_characterPixmapOffset;
+    const int cellSize = m_showGrid ? m_pixelSize + 1 : m_pixelSize;
+
+    if (m_showGrid && (pixmapPos.x() % cellSize == 0 || pixmapPos.y() % cellSize == 0))
+        return; // Border lines
+
+    const int x = pixmapPos.x() / cellSize;
+    const int y = pixmapPos.y() / cellSize;
+    if (x < 0 || x > 7 || y < 0 || y > 7)
+        return; // Invalid indices.
+
+    setPixel(x, y, leftButton);
+}
+
+QSize CharacterEditor::optimalSize(int pixelSize) const
+{
+    int dimension = pixelSize * 8;
+    if (m_showGrid)
+        dimension += 7;
+    dimension += 2;
+    return QSize(dimension, dimension);
+}
 
 void CharacterEditor::paintFullPixmap()
 {
     m_characterPixmap.fill(Qt::black);
     QPainter p(&m_characterPixmap);
 
-    const int cellSize = m_pixelSize + 1;
-
+    const int cellSize = m_showGrid ? m_pixelSize + 1 : m_pixelSize;
     for (int y=0; y<8; ++y) {
         for (int x=0; x<8; ++x) {
         p.fillRect(x * cellSize + 1, y * cellSize + 1, m_pixelSize, m_pixelSize,
@@ -194,20 +227,27 @@ void CharacterEditor::paintFullPixmap()
     m_updateFull = false;
 }
 
-void CharacterEditor::mouseClick(const QPoint &pos, bool leftButton)
+void CharacterEditor::resizePixmap(const QSize &size)
 {
-    const QPoint pixmapPos = pos - m_characterPixmapOffset;
-    const int cellSize = m_pixelSize + 1;
+    // Calculating optimal pixel size
+    const int minDimension = qMin(size.width(), size.height());
+    int pixelSize = minDimension - 2;
+    if (m_showGrid)
+        pixelSize -= 7;
+    pixelSize /= 8;
 
-    if (pixmapPos.x() % cellSize == 0 || pixmapPos.y() % cellSize == 0)
-        return; // Border lines
+    // Calculate drawing area dimension
+    int dimension = pixelSize * 8 + 2;
+    if (m_showGrid)
+        dimension += 7;
 
-    const int x = pixmapPos.x() / cellSize;
-    const int y = pixmapPos.y() / cellSize;
-    if (x < 0 || x > 7 || y < 0 || y > 7)
-        return; // Invalid indices.
-
-    setPixel(x, y, leftButton);
+    // Only update pixmap if new drawing area dimension is different
+    if (m_characterPixmap.width() != dimension) {
+        m_pixelSize = pixelSize;
+        m_characterPixmap = QPixmap(dimension, dimension);
+        updateFullPixmap();
+    }
+    updateOffset();
 }
 
 void CharacterEditor::setPixel(int x, int y, bool enabled)
@@ -222,7 +262,7 @@ void CharacterEditor::setPixel(int x, int y, bool enabled)
     else
         m_characterData.data()[y] &= kClearMask[x];
 
-    const int cellSize = m_pixelSize + 1;
+    const int cellSize = m_showGrid ? m_pixelSize + 1 : m_pixelSize;
     QRect updateArea(x * cellSize + 1, y * cellSize + 1, m_pixelSize, m_pixelSize);
     QPainter p(&m_characterPixmap);
     p.fillRect(updateArea, enabled ? m_foregroundColor : m_backgroundColor);

@@ -380,9 +380,14 @@ void ScreenWidget::setScreenSize(const QSize &size, bool undo)
 // Protected interface
 //--------------------------------------------------------------------------------------------------
 
+void ScreenWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    event->accept();
+}
+
 void ScreenWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    QWidget::mouseMoveEvent(event);
+    event->accept();
     if (event->buttons().testFlag(Qt::NoButton)) {
         QPoint screenPos;
         if (getScreenPosition(event->pos(), screenPos)) {
@@ -406,7 +411,7 @@ void ScreenWidget::mouseMoveEvent(QMouseEvent *event)
 
 void ScreenWidget::mousePressEvent(QMouseEvent *event)
 {
-    QWidget::mousePressEvent(event);
+    event->accept();
     if (m_paiting)
         return;
     // Testing if point is valid for paiting and also save screen position for line paiting.
@@ -432,7 +437,7 @@ void ScreenWidget::mousePressEvent(QMouseEvent *event)
 
 void ScreenWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    QWidget::mouseReleaseEvent(event);
+    event->accept();
     QPoint screenPos;
     if (getScreenPosition(event->pos(), screenPos)) {
         setCursorPos(QPoint(screenPos.x() * m_characterSize + 2,

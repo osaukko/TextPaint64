@@ -34,6 +34,7 @@ public:
     QColor          backgroundColor() const;
     QColor          foregroundColor() const;
     void            setAlignment(Qt::Alignment alignment);
+    bool            showGrid() const;
 
 public:
     virtual QSize   minimumSizeHint() const;
@@ -48,8 +49,10 @@ public slots:
     void            setBackgroundColor(const QColor &backgroundColor);
     void            setCharacterData(const QByteArray &data);
     void            setForegroundColor(const QColor &foregroundColor);
+    void            setShowGrid(bool show);
 
 protected:
+    virtual void    mouseDoubleClickEvent(QMouseEvent *event);
     virtual void    mouseMoveEvent(QMouseEvent *event);
     virtual void    mousePressEvent(QMouseEvent *event);
     virtual void    mouseReleaseEvent(QMouseEvent *event);
@@ -57,8 +60,10 @@ protected:
     virtual void    resizeEvent(QResizeEvent *event);
 
 private:
-    void            paintFullPixmap();
     void            mouseClick(const QPoint &pos, bool leftButton);
+    QSize           optimalSize(int pixelSize) const;
+    void            paintFullPixmap();
+    void            resizePixmap(const QSize &size);
     void            setPixel(int x, int y, bool enabled);
     void            updateFullPixmap();
     void            updateOffset();
@@ -72,6 +77,7 @@ private:
     QColor          m_foregroundColor;
     bool            m_paiting;
     int             m_pixelSize;
+    bool            m_showGrid;
     bool            m_updateFull;
 };
 

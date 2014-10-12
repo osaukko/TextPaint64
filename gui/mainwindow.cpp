@@ -33,9 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setupUi();
     setupToolbars();
-    setupIcons();
     setupCustomWidgets();
-    setupConnections();
     restoreSettings();
     setCurrentProjectFile(QString());
 }
@@ -115,18 +113,18 @@ void MainWindow::onCharacterEditorAligment()
     Qt::Alignment alignment;
 
     // Horizontal
-    if (m_characterEditorAlignment[MenuAlignLeft]->isChecked()) {
+    if (m_characterEditorAlignment[AlignMenuLeft]->isChecked()) {
         alignment = Qt::AlignLeft;
-    } else if (m_characterEditorAlignment[MenuAlignRight]->isChecked()) {
+    } else if (m_characterEditorAlignment[AlignMenuRight]->isChecked()) {
         alignment = Qt::AlignRight;
     } else {
         alignment = Qt::AlignHCenter;
     }
 
     // Vertical
-    if (m_characterEditorAlignment[MenuAlignTop]->isChecked()) {
+    if (m_characterEditorAlignment[AlignMenuTop]->isChecked()) {
         alignment |= Qt::AlignTop;
-    } else if (m_characterEditorAlignment[MenuAlignBottom]->isChecked()) {
+    } else if (m_characterEditorAlignment[AlignMenuBottom]->isChecked()) {
         alignment |= Qt::AlignBottom;
     } else {
         alignment |= Qt::AlignVCenter;
@@ -579,12 +577,12 @@ bool MainWindow::okToContinue()
 
 void MainWindow::restoreAligmentMenu(Qt::Alignment alignment, QAction **alignmentActions)
 {
-    alignmentActions[MenuAlignLeft   ]->setChecked(alignment.testFlag(Qt::AlignLeft));
-    alignmentActions[MenuAlignHCenter]->setChecked(alignment.testFlag(Qt::AlignHCenter));
-    alignmentActions[MenuAlignRight  ]->setChecked(alignment.testFlag(Qt::AlignRight));
-    alignmentActions[MenuAlignTop    ]->setChecked(alignment.testFlag(Qt::AlignTop));
-    alignmentActions[MenuAlignVCenter]->setChecked(alignment.testFlag(Qt::AlignVCenter));
-    alignmentActions[MenuAlignBottom ]->setChecked(alignment.testFlag(Qt::AlignBottom));
+    alignmentActions[AlignMenuLeft   ]->setChecked(alignment.testFlag(Qt::AlignLeft));
+    alignmentActions[AlignMenuHCenter]->setChecked(alignment.testFlag(Qt::AlignHCenter));
+    alignmentActions[AlignMenuRight  ]->setChecked(alignment.testFlag(Qt::AlignRight));
+    alignmentActions[AlignMenuTop    ]->setChecked(alignment.testFlag(Qt::AlignTop));
+    alignmentActions[AlignMenuVCenter]->setChecked(alignment.testFlag(Qt::AlignVCenter));
+    alignmentActions[AlignMenuBottom ]->setChecked(alignment.testFlag(Qt::AlignBottom));
 }
 
 void MainWindow::restoreSettings()
@@ -611,8 +609,10 @@ void MainWindow::restoreSettings()
     settings.endGroup();
 
     settings.beginGroup("CharacterEditor");
-    editorWidget->setAlignment(
-                static_cast<Qt::Alignment>(settings.value("alignment", Qt::AlignCenter).toUInt()));
+    editorWidget->setShowGrid(settings.value("showGrid", true).toBool());
+    editorWidget->setAlignment(static_cast<Qt::Alignment>(
+                                   settings.value("alignment", Qt::AlignCenter).toUInt()));
+    m_characterEditorGrid->setChecked(editorWidget->showGrid());
     restoreAligmentMenu(editorWidget->alignment(), m_characterEditorAlignment);
     settings.endGroup();
 
@@ -704,6 +704,7 @@ void MainWindow::saveSettings()
     settings.endGroup();
 
     settings.beginGroup("CharacterEditor");
+    settings.setValue("showGrid", editorWidget->showGrid());
     settings.setValue("alignment", static_cast<quint32>(editorWidget->alignment()));
     settings.endGroup();
 
@@ -760,44 +761,63 @@ void MainWindow::setupAlignmentMenu(QMenu *menu, QAction **alignmentActions,
                                     const QObject *receiver, const char *method)
 {
     // Create menu items
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-    menu->addSection(tr("Horizontal")); // Qt5 feature
-#endif
-    alignmentActions[MenuAlignLeft   ] = menu->addAction(tr("Left"));
-    alignmentActions[MenuAlignHCenter] = menu->addAction(tr("Center"));
-    alignmentActions[MenuAlignRight  ] = menu->addAction(tr("Right"));
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-    menu->addSection(tr("Vertical"));   // Qt5 feature
-#else
-    menu->addSeparator();               // Using separator on Qt4
-#endif
-    alignmentActions[MenuAlignTop    ] = menu->addAction(tr("Top"));
-    alignmentActions[MenuAlignVCenter] = menu->addAction(tr("Center"));
-    alignmentActions[MenuAlignBottom ] = menu->addAction(tr("Bottom"));
+    alignmentActions[AlignMenuHLabel ] = menu->addSeparator();
+    alignmentActions[AlignMenuLeft   ] = menu->addAction(tr("Left"));
+    alignmentActions[AlignMenuHCenter] = menu->addAction(tr("Center"));
+    alignmentActions[AlignMenuRight  ] = menu->addAction(tr("Right"));
+    alignmentActions[AlignMenuVLabel ] = menu->addSeparator();
+    alignmentActions[AlignMenuTop    ] = menu->addAction(tr("Top"));
+    alignmentActions[AlignMenuVCenter] = menu->addAction(tr("Center"));
+    alignmentActions[AlignMenuBottom ] = menu->addAction(tr("Bottom"));
 
     // Set icons
-    alignmentActions[MenuAlignLeft   ]->setIcon(iIconCache.alignLeft());
-    alignmentActions[MenuAlignHCenter]->setIcon(iIconCache.alignHCenter());
-    alignmentActions[MenuAlignRight  ]->setIcon(iIconCache.alignRight());
-    alignmentActions[MenuAlignTop    ]->setIcon(iIconCache.alignTop());
-    alignmentActions[MenuAlignVCenter]->setIcon(iIconCache.alignVCenter());
-    alignmentActions[MenuAlignBottom ]->setIcon(iIconCache.alignBottom());
+    alignmentActions[AlignMenuLeft   ]->setIcon(iIconCache.alignLeft());
+    alignmentActions[AlignMenuHCenter]->setIcon(iIconCache.alignHCenter());
+    alignmentActions[AlignMenuRight  ]->setIcon(iIconCache.alignRight());
+    alignmentActions[AlignMenuTop    ]->setIcon(iIconCache.alignTop());
+    alignmentActions[AlignMenuVCenter]->setIcon(iIconCache.alignVCenter());
+    alignmentActions[AlignMenuBottom ]->setIcon(iIconCache.alignBottom());
 
     // Setup menu items and connections
-    for (int i=0; i<6; ++i) {
-        alignmentActions[i]->setCheckable(true);
-        connect(alignmentActions[i], SIGNAL(triggered()), receiver, method);
+    alignmentActions[AlignMenuHLabel]->setText(tr("Horizontal aligment"));
+    alignmentActions[AlignMenuVLabel]->setText(tr("Vertical aligment"));
+    for (int i=0; i<AlignMenuItemCount; ++i) {
+        if (!alignmentActions[i]->isSeparator()) {
+            alignmentActions[i]->setCheckable(true);
+            connect(alignmentActions[i], SIGNAL(triggered()), receiver, method);
+        }
     }
 
     // Create action groups
     QActionGroup *horizontalGroup = new QActionGroup(this);
-    horizontalGroup->addAction(alignmentActions[MenuAlignLeft]);
-    horizontalGroup->addAction(alignmentActions[MenuAlignHCenter]);
-    horizontalGroup->addAction(alignmentActions[MenuAlignRight]);
+    horizontalGroup->addAction(alignmentActions[AlignMenuLeft]);
+    horizontalGroup->addAction(alignmentActions[AlignMenuHCenter]);
+    horizontalGroup->addAction(alignmentActions[AlignMenuRight]);
     QActionGroup *verticalGroup = new QActionGroup(this);
-    verticalGroup->addAction(alignmentActions[MenuAlignTop]);
-    verticalGroup->addAction(alignmentActions[MenuAlignVCenter]);
-    verticalGroup->addAction(alignmentActions[MenuAlignBottom]);
+    verticalGroup->addAction(alignmentActions[AlignMenuTop]);
+    verticalGroup->addAction(alignmentActions[AlignMenuVCenter]);
+    verticalGroup->addAction(alignmentActions[AlignMenuBottom]);
+
+    // Making sure that separator labels are fully visible
+    int fixedMenuWidth = qMax(menu->fontMetrics().width(alignmentActions[AlignMenuHLabel]->text()),
+                              menu->fontMetrics().width(alignmentActions[AlignMenuVLabel]->text()));
+    fixedMenuWidth += 48; // Some extra pixels for borders and margins
+    menu->setFixedWidth(fixedMenuWidth);
+}
+
+void MainWindow::setupCharsetMenu()
+{
+    // Built-in charset menu entries
+    QStringList items =
+            QDir(":/charsets/").entryList(QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
+    foreach (const QString &item, items)
+        menuCharsetLoadBuiltIn->addAction(item, this, SLOT(onLoadBuiltIn()));
+
+    // Charset menu
+    actionCharsetClear->setIcon(iIconCache.editClear());
+    actionCharsetOpenFile->setIcon(iIconCache.charsetDocumentOpen());
+    actionCharsetSaveAs->setIcon(iIconCache.charsetDocumentSaveAs());
+    menuCharsetLoadBuiltIn->setIcon(iIconCache.mediaFlash());
 }
 
 void MainWindow::setupCustomWidgets()
@@ -814,18 +834,8 @@ void MainWindow::setupCustomWidgets()
     // Screen widget
     screenWidget->setCharsetWidget(charsetWidget);
     screenWidget->setPaletteWidget(paletteWidget);
-}
 
-void MainWindow::setupConnections()
-{
-    // Menu actions
-    connect(actionFileNewProject, SIGNAL(triggered()), SLOT(onNewProject()));
-    connect(actionFileOpenProject, SIGNAL(triggered()), SLOT(onOpenProject()));
-    connect(actionFileSaveProject, SIGNAL(triggered()), SLOT(onSaveProject()));
-    connect(actionFileSaveProjectAs, SIGNAL(triggered()), SLOT(onSaveProjectAs()));
-    connect(actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-
-    // Custom widgets
+    // Connections
     connect(charsetWidget,  SIGNAL(currentCharacterChanged(QByteArray)),
             editorWidget,   SLOT(setCharacterData(QByteArray)));
     connect(editorWidget,   SIGNAL(characterDataChanged(QByteArray)),
@@ -840,24 +850,13 @@ void MainWindow::setupConnections()
             editorWidget,   SLOT(setForegroundColor(QColor)));
     connect(screenWidget,   SIGNAL(screenSizeChanged(QSize)), SLOT(onScreenSizeChanged(QSize)));
 
-    // Undo/redo support for character edits
-    connect(editorWidget,   SIGNAL(editBegin()),    charsetWidget,  SLOT(editBegin()));
-    connect(editorWidget,   SIGNAL(editEnd()),      charsetWidget,  SLOT(editEnd()));
-    connect(charsetWidget,  SIGNAL(undoCommandReady()), SLOT(onCharacterUndoCommandReady()));
-
-    // Undo/redo support for palette changes
-    connect(paletteWidget,  SIGNAL(undoCommandReady()), SLOT(onPaletteUndoCommandReady()));
-
-    // Undo/redo support for screen edits
-    connect(screenWidget,   SIGNAL(undoCommandReady()), SLOT(onScreenUndoCommandReady()));
-
-    // Overlay settings
+    // Connections (overlay settings)
     connect(overlayImageCheckBox,   SIGNAL(toggled(bool)),
             screenWidget,           SLOT(setOverlayEnabled(bool)));
     connect(xOffsetSlider, SIGNAL(valueChanged(int)), screenWidget, SLOT(setOverlayXOffset(int)));
     connect(yOffsetSlider, SIGNAL(valueChanged(int)), screenWidget, SLOT(setOverlayYOffset(int)));
 
-    // Paiting modes
+    // Connections (paiting modes)
     connect(normalPaintToolButton,      SIGNAL(clicked()),
             screenWidget,               SLOT(setPaintNormal()));
     connect(colorPaintToolButton,       SIGNAL(clicked()),
@@ -865,107 +864,22 @@ void MainWindow::setupConnections()
     connect(characterPaintToolButton,   SIGNAL(clicked()),
             screenWidget,               SLOT(setPaintCharactersOnly()));
 
-    // Draw tools
+    // Connections (drawing tools)
     connect(drawLinesToolButton,        SIGNAL(clicked()),
             screenWidget,               SLOT(setDrawLines()));
     connect(floodFillToolButton,        SIGNAL(clicked()),
             screenWidget,               SLOT(setFloodFill()));
 
-    // Modification updates
+    // Connections (modification updates)
     connect(charsetWidget,  SIGNAL(charsetChanged()),                   SLOT(onModify()));
     connect(editorWidget,   SIGNAL(characterDataChanged(QByteArray)),   SLOT(onModify()));
     connect(paletteWidget,  SIGNAL(backgroundChanged(QColor)),          SLOT(onModify()));
     connect(screenWidget,   SIGNAL(screenDataChanged()),                SLOT(onModify()));
 }
 
-void MainWindow::setupIcons()
+void MainWindow::setupEditMenu()
 {
-    // Window
-    setWindowIcon(iIconCache.textPaint64());
-
-    // File menu
-    actionFileNewProject->setIcon(iIconCache.documentNew());
-    actionFileOpenProject->setIcon(iIconCache.documentOpen());
-    menuRecentProjects->setIcon(iIconCache.documentOpenRecent());
-    m_recentProjectMenuButton->setIcon(iIconCache.documentOpenRecent());
-    actionFileSaveProject->setIcon(iIconCache.documentSave());
-    actionFileSaveProjectAs->setIcon(iIconCache.documentSaveAs());
-    actionFileExit->setIcon(iIconCache.applicationExit());
-
-    // Edit menu
-    m_undoAction->setIcon(iIconCache.editUndo());
-    m_redoAction->setIcon(iIconCache.editRedo());
-
-    // Charset menu
-    actionCharsetClear->setIcon(iIconCache.editClear());
-    actionCharsetOpenFile->setIcon(iIconCache.charsetDocumentOpen());
-    actionCharsetSaveAs->setIcon(iIconCache.charsetDocumentSaveAs());
-    menuCharsetLoadBuiltIn->setIcon(iIconCache.mediaFlash());
-    m_builtInCharsetToolButton->setIcon(iIconCache.mediaFlash());
-
-    // Screen menu
-    menuScreenMode->setIcon(iIconCache.viewGrid());
-    m_hiResTextModeToolButton->setIcon(iIconCache.viewGrid());
-    menuScreenScaling->setIcon(iIconCache.pageZoom());
-    m_pixelScalingToolButton->setIcon(iIconCache.pageZoom());
-    actionScreenOpenCharacterData->setIcon(iIconCache.screenDocumentOpen());
-    actionScreenSaveCharacterData->setIcon(iIconCache.screenDocumentSaveAs());
-    actionScreenOpenColorData->setIcon(iIconCache.colorsDocumentOpen());
-    actionScreenSaveColorData->setIcon(iIconCache.colorsDocumentSaveAs());
-
-    // Window menu
-    menuDocks->setIcon(iIconCache.viewForm());
-    menuToolbars->setIcon(iIconCache.configureToolbars());
-
-    // Help menu
-    actionAboutTextPaint64->setIcon(iIconCache.textPaint64());
-    actionAboutQt->setIcon(iIconCache.qtLogo());
-
-    // Palette
-    drawLinesToolButton->setIcon(iIconCache.drawFreehand());
-    floodFillToolButton->setIcon(iIconCache.fillColor());
-}
-
-void MainWindow::setupToolbars()
-{
-    // File toolbar
-    m_recentProjectMenuButton = createMenuToolButton(menuRecentProjects);
-    m_recentProjectMenuButton->setEnabled(false);
-    fileToolBar->insertWidget(fileToolBar->actions().value(2), m_recentProjectMenuButton);
-
-    // Edit toolbar
-    editToolBar->addAction(m_undoAction);
-    editToolBar->addAction(m_redoAction);
-
-    // Charset toolbar
-    m_builtInCharsetToolButton = createMenuToolButton(menuCharsetLoadBuiltIn);
-    charsetToolBar->addWidget(m_builtInCharsetToolButton);
-
-    // Screen toolbar
-    m_pixelScalingToolButton = createMenuToolButton(menuScreenScaling);
-    screenToolBar->insertWidget(screenToolBar->actions().value(0), m_pixelScalingToolButton);
-    m_hiResTextModeToolButton = createMenuToolButton(menuScreenMode);
-    screenToolBar->insertWidget(screenToolBar->actions().value(0), m_hiResTextModeToolButton);
-}
-
-void MainWindow::setupUi()
-{
-    // Load mainwindow.ui
-    Ui::MainWindow::setupUi(this);
-    overlayDockWidget->hide();
-    screenScrollArea->setBackgroundRole(QPalette::Dark);
-
-    // Setup recent project actions
-    for (int i=0; i<MaxRecentProjects; ++i) {
-        m_recentProjectActions[i] = new QAction(this);
-        m_recentProjectActions[i]->setVisible(false);
-        menuRecentProjects->addAction(m_recentProjectActions[i]);
-        connect(m_recentProjectActions[i], SIGNAL(triggered()), SLOT(onOpenRecentProject()));
-    }
-
-    // Setup undo stack and related actions
-    m_undoStack = new QUndoStack(this);
-    m_undoStack->setUndoLimit(1000);
+    // Undo/redo actions
     m_undoAction = m_undoStack->createUndoAction(this);
     m_undoAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z));
     m_redoAction = m_undoStack->createRedoAction(this);
@@ -973,12 +887,53 @@ void MainWindow::setupUi()
     menuEdit->addAction(m_undoAction);
     menuEdit->addAction(m_redoAction);
 
-    // Setup built-in charset menu entries
-    QStringList items =
-            QDir(":/charsets/").entryList(QDir::Files | QDir::NoDotAndDotDot, QDir::Name);
-    foreach (const QString &item, items)
-        menuCharsetLoadBuiltIn->addAction(item, this, SLOT(onLoadBuiltIn()));
+    // Icons
+    m_undoAction->setIcon(iIconCache.editUndo());
+    m_redoAction->setIcon(iIconCache.editRedo());
 
+    // Connections required for undo/redo
+    connect(editorWidget,   SIGNAL(editBegin()),    charsetWidget,  SLOT(editBegin()));
+    connect(editorWidget,   SIGNAL(editEnd()),      charsetWidget,  SLOT(editEnd()));
+    connect(charsetWidget,  SIGNAL(undoCommandReady()), SLOT(onCharacterUndoCommandReady()));
+    connect(paletteWidget,  SIGNAL(undoCommandReady()), SLOT(onPaletteUndoCommandReady()));
+    connect(screenWidget,   SIGNAL(undoCommandReady()), SLOT(onScreenUndoCommandReady()));
+}
+
+void MainWindow::setupFileMenu()
+{
+    // Recent project actions
+    for (int i=0; i<MaxRecentProjects; ++i) {
+        m_recentProjectActions[i] = new QAction(this);
+        m_recentProjectActions[i]->setVisible(false);
+        menuRecentProjects->addAction(m_recentProjectActions[i]);
+        connect(m_recentProjectActions[i], SIGNAL(triggered()), SLOT(onOpenRecentProject()));
+    }
+
+    // Icons
+    actionFileNewProject->setIcon(iIconCache.documentNew());
+    actionFileOpenProject->setIcon(iIconCache.documentOpen());
+    menuRecentProjects->setIcon(iIconCache.documentOpenRecent());
+    actionFileSaveProject->setIcon(iIconCache.documentSave());
+    actionFileSaveProjectAs->setIcon(iIconCache.documentSaveAs());
+    actionFileExit->setIcon(iIconCache.applicationExit());
+
+    // Connections
+    connect(actionFileNewProject, SIGNAL(triggered()), SLOT(onNewProject()));
+    connect(actionFileOpenProject, SIGNAL(triggered()), SLOT(onOpenProject()));
+    connect(actionFileSaveProject, SIGNAL(triggered()), SLOT(onSaveProject()));
+    connect(actionFileSaveProjectAs, SIGNAL(triggered()), SLOT(onSaveProjectAs()));
+    connect(actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+}
+
+void MainWindow::setupHelpMenu()
+{
+    // Icons
+    actionAboutTextPaint64->setIcon(iIconCache.textPaint64());
+    actionAboutQt->setIcon(iIconCache.qtLogo());
+}
+
+void MainWindow::setupScreenMenu()
+{
     // Create action group for scaling modes and connect signals while at it
     QActionGroup *group = new QActionGroup(this);
     foreach (QAction *action, menuScreenScaling->actions()) {
@@ -994,6 +949,68 @@ void MainWindow::setupUi()
     group->addAction(actionScreenMode40x25);
     group->addAction(actionScreenModeCustom);
 
+    // Icons
+    menuScreenMode->setIcon(iIconCache.viewGrid());
+    menuScreenScaling->setIcon(iIconCache.pageZoom());
+    actionScreenOpenCharacterData->setIcon(iIconCache.screenDocumentOpen());
+    actionScreenSaveCharacterData->setIcon(iIconCache.screenDocumentSaveAs());
+    actionScreenOpenColorData->setIcon(iIconCache.colorsDocumentOpen());
+    actionScreenSaveColorData->setIcon(iIconCache.colorsDocumentSaveAs());
+}
+
+void MainWindow::setupToolbars()
+{
+    // File toolbar
+    m_recentProjectMenuButton = createMenuToolButton(menuRecentProjects);
+    m_recentProjectMenuButton->setEnabled(false);
+    m_recentProjectMenuButton->setIcon(iIconCache.documentOpenRecent());
+    fileToolBar->insertWidget(fileToolBar->actions().value(2), m_recentProjectMenuButton);
+
+    // Edit toolbar
+    editToolBar->addAction(m_undoAction);
+    editToolBar->addAction(m_redoAction);
+
+    // Charset toolbar
+    m_builtInCharsetToolButton = createMenuToolButton(menuCharsetLoadBuiltIn);
+    m_builtInCharsetToolButton->setIcon(iIconCache.mediaFlash());
+    charsetToolBar->addWidget(m_builtInCharsetToolButton);
+
+    // Screen toolbar
+    m_pixelScalingToolButton = createMenuToolButton(menuScreenScaling);
+    m_pixelScalingToolButton->setIcon(iIconCache.pageZoom());
+    screenToolBar->insertWidget(screenToolBar->actions().value(0), m_pixelScalingToolButton);
+    m_hiResTextModeToolButton = createMenuToolButton(menuScreenMode);
+    m_hiResTextModeToolButton->setIcon(iIconCache.viewGrid());
+    screenToolBar->insertWidget(screenToolBar->actions().value(0), m_hiResTextModeToolButton);
+}
+
+void MainWindow::setupUi()
+{
+    // Main window
+    Ui::MainWindow::setupUi(this);
+    overlayDockWidget->hide();
+    screenScrollArea->setBackgroundRole(QPalette::Dark);
+
+    // Icons
+    setWindowIcon(iIconCache.textPaint64());
+    drawLinesToolButton->setIcon(iIconCache.drawFreehand());
+    floodFillToolButton->setIcon(iIconCache.fillColor());
+
+    // Undo stack
+    m_undoStack = new QUndoStack(this);
+    m_undoStack->setUndoLimit(1000);
+
+    // Menus
+    setupFileMenu();
+    setupEditMenu();
+    setupCharsetMenu();
+    setupScreenMenu();
+    setupWindowMenu();
+    setupHelpMenu();
+}
+
+void MainWindow::setupWindowMenu()
+{
     // Setup Docks menu
     menuDocks->addAction(charsetDockWidget->toggleViewAction());
     menuDocks->addAction(editorDockWidget->toggleViewAction());
@@ -1015,9 +1032,19 @@ void MainWindow::setupUi()
         m_toolbarIconSizeGroup->addAction(iconSizeAction);
     }
 
-    // Setup alignment menus
-    setupAlignmentMenu(menuCharacterEditorAlignment, m_characterEditorAlignment,
+    // Setup character editor menu
+    m_characterEditorGrid = menuCharacterEditor->addAction(tr("Show &Grid"));
+    m_characterEditorGrid->setCheckable(true);
+    setupAlignmentMenu(menuCharacterEditor, m_characterEditorAlignment,
                        this, SLOT(onCharacterEditorAligment()));
+
+    // Icons
+    menuDocks->setIcon(iIconCache.viewForm());
+    menuToolbars->setIcon(iIconCache.configureToolbars());
+    m_characterEditorGrid->setIcon(iIconCache.viewGrid());
+
+    // Connections
+    connect(m_characterEditorGrid, SIGNAL(toggled(bool)), editorWidget, SLOT(setShowGrid(bool)));
 }
 
 QString MainWindow::strippedName(const QString &fullFileName)

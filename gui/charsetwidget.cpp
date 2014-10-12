@@ -238,25 +238,30 @@ void CharsetWidget::setForegroundColor(const QColor &foregroundColor)
 // Protected interface
 //--------------------------------------------------------------------------------------------------
 
+void CharsetWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    event->accept();
+}
+
 void CharsetWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    QWidget::mouseMoveEvent(event);
     if (event->buttons().testFlag(Qt::LeftButton))
         selectCharacter(event->pos());
+    event->accept();
 }
 
 void CharsetWidget::mousePressEvent(QMouseEvent *event)
 {
-    QWidget::mousePressEvent(event);
     if (event->button() == Qt::LeftButton)
         selectCharacter(event->pos());
+    event->accept();
 }
 
 void CharsetWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    QWidget::mouseReleaseEvent(event);
     if (event->button() == Qt::LeftButton)
         selectCharacter(event->pos());
+    event->accept();
 }
 
 void CharsetWidget::paintEvent(QPaintEvent *event)

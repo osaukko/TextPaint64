@@ -105,31 +105,36 @@ void PaletteWidget::setForegroundIndex(int index)
 // Protected interface
 //----------------------------------------------------------------------------------------------------------------------
 
+void PaletteWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    event->accept();
+}
+
 void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    QWidget::mouseMoveEvent(event);
     if (event->buttons().testFlag(Qt::LeftButton))
         mouseClick(event->pos(), true);
     else if (event->buttons().testFlag(Qt::RightButton))
         mouseClick(event->pos(), false);
+    event->accept();
 }
 
 void PaletteWidget::mousePressEvent(QMouseEvent *event)
 {
-    QWidget::mousePressEvent(event);
     if (event->buttons().testFlag(Qt::LeftButton))
         mouseClick(event->pos(), true);
     else if (event->buttons().testFlag(Qt::RightButton))
         mouseClick(event->pos(), false);
+    event->accept();
 }
 
 void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    QWidget::mouseReleaseEvent(event);
     if (event->buttons().testFlag(Qt::LeftButton))
         mouseClick(event->pos(), true);
     else if (event->buttons().testFlag(Qt::RightButton))
         mouseClick(event->pos(), false);
+    event->accept();
 }
 
 void PaletteWidget::paintEvent(QPaintEvent *event)

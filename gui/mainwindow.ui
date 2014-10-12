@@ -352,15 +352,15 @@
      <addaction name="menuIconSize"/>
      <addaction name="separator"/>
     </widget>
-    <widget class="QMenu" name="menuCharacterEditorAlignment">
+    <widget class="QMenu" name="menuCharacterEditor">
      <property name="title">
-      <string>&amp;Character editor alignment</string>
+      <string>&amp;Character editor</string>
      </property>
     </widget>
     <addaction name="menuDocks"/>
     <addaction name="menuToolbars"/>
     <addaction name="separator"/>
-    <addaction name="menuCharacterEditorAlignment"/>
+    <addaction name="menuCharacterEditor"/>
    </widget>
    <widget class="QMenu" name="menuScreen">
     <property name="title">
@@ -477,6 +477,9 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Preferred</enum>
+       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
@@ -498,7 +501,13 @@
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="CharacterEditor" name="editorWidget"/>
+   <widget class="QWidget" name="editorDockWidgetContents">
+    <layout class="QVBoxLayout" name="characterEditorDockVerticalLayout">
+     <item>
+      <widget class="CharacterEditor" name="editorWidget" native="true"/>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QDockWidget" name="overlayDockWidget">
    <property name="windowTitle">
@@ -507,7 +516,7 @@
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
+   <widget class="QWidget" name="overlayDockWidgetContents">
     <layout class="QVBoxLayout" name="overlayVerticalLayout">
      <item>
       <layout class="QGridLayout" name="fileGridLayout">
@@ -660,10 +669,13 @@
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::MinimumExpanding</enum>
+       </property>
        <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
-         <height>50</height>
+         <height>0</height>
         </size>
        </property>
       </spacer>
