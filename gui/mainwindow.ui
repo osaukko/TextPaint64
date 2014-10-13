@@ -354,12 +354,31 @@
     </widget>
     <widget class="QMenu" name="menuCharacterEditor">
      <property name="title">
-      <string>&amp;Character editor</string>
+      <string>Character &amp;Editor</string>
      </property>
+     <addaction name="actionEditorShowGrid"/>
+    </widget>
+    <widget class="QMenu" name="menuCharacterSelector">
+     <property name="title">
+      <string>Character &amp;Selector</string>
+     </property>
+     <widget class="QMenu" name="menuCharSelectorArrangement">
+      <property name="title">
+       <string>&amp;Arrangement</string>
+      </property>
+      <addaction name="actionCharSelector4x64"/>
+      <addaction name="actionCharSelector8x32"/>
+      <addaction name="actionCharSelector16x16"/>
+      <addaction name="actionCharSelector32x8"/>
+      <addaction name="actionCharSelector64x4"/>
+     </widget>
+     <addaction name="menuCharSelectorArrangement"/>
+     <addaction name="actionCharSelectorShowGrid"/>
     </widget>
     <addaction name="menuDocks"/>
     <addaction name="menuToolbars"/>
     <addaction name="separator"/>
+    <addaction name="menuCharacterSelector"/>
     <addaction name="menuCharacterEditor"/>
     <addaction name="separator"/>
     <addaction name="actionResetSettings"/>
@@ -391,7 +410,7 @@
       <string>Change pixel scaling</string>
      </property>
      <property name="title">
-      <string>&amp;Pixel scaling</string>
+      <string>&amp;Pixel Scaling</string>
      </property>
      <property name="icon">
       <iconset resource="../resources/icons.qrc">
@@ -460,9 +479,6 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="charsetDockWidget">
-   <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
-   </property>
    <property name="windowTitle">
     <string>Select character</string>
    </property>
@@ -494,9 +510,6 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="editorDockWidget">
-   <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
-   </property>
    <property name="windowTitle">
     <string>Character editor</string>
    </property>
@@ -1071,6 +1084,70 @@
    </property>
    <property name="text">
     <string>&amp;Reset settings</string>
+   </property>
+  </action>
+  <action name="actionCharSelector8x32">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>8 x 32</string>
+   </property>
+  </action>
+  <action name="actionCharSelector16x16">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>16 x 16</string>
+   </property>
+  </action>
+  <action name="actionCharSelector32x8">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>32 x 8</string>
+   </property>
+  </action>
+  <action name="actionCharSelector4x64">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>4 x 64</string>
+   </property>
+  </action>
+  <action name="actionCharSelector64x4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>64 x 4</string>
+   </property>
+  </action>
+  <action name="actionCharSelectorShowGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/icons.qrc">
+     <normaloff>:/icons/16x16/view-grid.png</normaloff>:/icons/16x16/view-grid.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Show Grid</string>
+   </property>
+  </action>
+  <action name="actionEditorShowGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/icons.qrc">
+     <normaloff>:/icons/16x16/view-grid.png</normaloff>:/icons/16x16/view-grid.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Show Grid</string>
    </property>
   </action>
  </widget>

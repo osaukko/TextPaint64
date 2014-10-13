@@ -33,6 +33,7 @@ static const uchar kClearMask[8]    = { 0x7f, 0xbf, 0xdf, 0xef, 0xf7, 0xfb, 0xfd
 
 CharacterEditor::CharacterEditor(QWidget *parent)
     : QWidget(parent)
+    , m_alignment(Qt::AlignHCenter | Qt::AlignTop)
     , m_backgroundColor(Qt::black)
     , m_characterData(8, 0)
     , m_foregroundColor(Qt::white)

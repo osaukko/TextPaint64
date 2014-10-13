@@ -35,12 +35,15 @@ static const int kCharsetSize   = 256*8;
 
 CharsetWidget::CharsetWidget(QWidget *parent)
     : QWidget(parent)
+    , m_alignment(Qt::AlignHCenter | Qt::AlignTop)
+    , m_arrangement(Arrange16x16)
     , m_backgroundColor(Qt::black)
     , m_charset(kCharsetSize, 0)
     , m_charsetPixmap(kWidth, kHeight)
     , m_foregroundColor(Qt::white)
     , m_selectedCharacterIndex(0)
     , m_selectionPen(Qt::white, 1.0, Qt::CustomDashLine)
+    , m_showGrid(true)
     , m_undoType(NoUndo)
     , m_updateCharacter(-1)
     , m_updateFullset(true)
@@ -57,8 +60,14 @@ CharsetWidget::CharsetWidget(QWidget *parent)
     m_animationTimer->start();
 }
 
-CharsetWidget::~CharsetWidget()
+Qt::Alignment CharsetWidget::alignment() const
 {
+    return m_alignment;
+}
+
+CharsetWidget::Arrangement CharsetWidget::arrangement() const
+{
+    return m_arrangement;
 }
 
 QColor CharsetWidget::backgroundColor() const
@@ -134,6 +143,22 @@ int CharsetWidget::selectedCharacterIndex() const
     return m_selectedCharacterIndex;
 }
 
+void CharsetWidget::setAlignment(Qt::Alignment alignment)
+{
+    if (m_alignment == alignment)
+        return;
+    m_alignment = alignment;
+    qDebug() << "TODO:" << Q_FUNC_INFO;
+}
+
+void CharsetWidget::setArrangement(const Arrangement &arrangement)
+{
+    if (m_arrangement == arrangement)
+        return;
+    m_arrangement = arrangement;
+    qDebug() << "TODO:" << Q_FUNC_INFO;
+}
+
 void CharsetWidget::setCharacter(int index, const QByteArray &data)
 {
     m_charset.replace(index * 8, 8, data);
@@ -160,6 +185,11 @@ void CharsetWidget::setCharset(const QByteArray &charset, bool undo)
     emit currentCharacterChanged(character(m_selectedCharacterIndex));
     emit charsetChanged();
     updateFullSet();
+}
+
+bool CharsetWidget::showGrid() const
+{
+    return m_showGrid;
 }
 
 QUndoCommand *CharsetWidget::createUndoCommand()
@@ -233,6 +263,14 @@ void CharsetWidget::setForegroundColor(const QColor &foregroundColor)
         return;
     m_foregroundColor = foregroundColor;
     updateFullSet();
+}
+
+void CharsetWidget::setShowGrid(bool show)
+{
+    if (m_showGrid == show)
+        return;
+    m_showGrid = show;
+    qDebug() << "TODO:" << Q_FUNC_INFO;
 }
 
 // Protected interface

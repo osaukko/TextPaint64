@@ -28,15 +28,21 @@ class CharsetWidget : public QWidget
 {
     Q_OBJECT
 
-    enum UndoType {
-        NoUndo,
-        CharacterEdit,
-        CharsetReplace
+
+public:
+    enum Arrangement {
+        Arrange4x64 = 0,
+        Arrange8x32,
+        Arrange16x16,
+        Arrange32x8,
+        Arrange64x4
     };
 
 public:
     explicit        CharsetWidget(QWidget *parent = 0);
-    virtual         ~CharsetWidget();
+
+    Qt::Alignment   alignment() const;
+    Arrangement     arrangement() const;
     QColor          backgroundColor() const;
     QByteArray      character(int index) const;
     QImage          characterImage(int index, const QColor &backgroundColor,
@@ -46,8 +52,11 @@ public:
     QByteArray      charset() const;
     QColor          foregroundColor() const;
     int             selectedCharacterIndex() const;
+    void            setAlignment(Qt::Alignment alignment);
+    void            setArrangement(const Arrangement &arrangement);
     void            setCharacter(int index, const QByteArray &data);
     void            setCharset(const QByteArray &charset, bool undo = true);
+    bool            showGrid() const;
 
     QUndoCommand    *createUndoCommand();
 
@@ -64,6 +73,7 @@ public slots:
     void            selectCharacter(int index);
     void            setBackgroundColor(const QColor &backgroundColor);
     void            setForegroundColor(const QColor &foregroundColor);
+    void            setShowGrid(bool show);
 
 protected:
     virtual void    mouseDoubleClickEvent(QMouseEvent *event);
@@ -85,6 +95,15 @@ private slots:
     void            animateSelectionPen();
 
 private:
+    enum UndoType {
+        NoUndo,
+        CharacterEdit,
+        CharsetReplace
+    };
+
+private:
+    Qt::Alignment   m_alignment;
+    Arrangement     m_arrangement;
     QColor          m_backgroundColor;
     QByteArray      m_charset;
     QPixmap         m_charsetPixmap;
@@ -92,6 +111,7 @@ private:
     QByteArray      m_redoData;
     int             m_selectedCharacterIndex;
     QPen            m_selectionPen;
+    bool            m_showGrid;
     int             m_undoCharacterIndex;
     QByteArray      m_undoData;
     UndoType        m_undoType;

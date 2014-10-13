@@ -83,6 +83,7 @@ class IconCache
     CACHEICON(applicationExit,          "application-exit.png")
     CACHEICON(charsetDocumentOpen,      "charset-document-open.png")
     CACHEICON(charsetDocumentSaveAs,    "charset-document-save-as.png")
+    CACHEICON(codeBlock,                "code-block.png")
     CACHEICON(colorsDocumentOpen,       "colors-document-open.png")
     CACHEICON(colorsDocumentSaveAs,     "colors-document-save-as.png")
     CACHEICON(configureToolbars,        "configure-toolbars.png")

@@ -9,6 +9,7 @@
         <file>icons/16x16/application-exit.png</file>
         <file>icons/16x16/charset-document-open.png</file>
         <file>icons/16x16/charset-document-save-as.png</file>
+        <file>icons/16x16/code-block.png</file>
         <file>icons/16x16/colors-document-open.png</file>
         <file>icons/16x16/colors-document-save-as.png</file>
         <file>icons/16x16/configure-toolbars.png</file>
@@ -43,6 +44,7 @@
         <file>icons/22x22/application-exit.png</file>
         <file>icons/22x22/charset-document-open.png</file>
         <file>icons/22x22/charset-document-save-as.png</file>
+        <file>icons/22x22/code-block.png</file>
         <file>icons/22x22/colors-document-open.png</file>
         <file>icons/22x22/colors-document-save-as.png</file>
         <file>icons/22x22/configure-toolbars.png</file>
@@ -74,6 +76,7 @@
         <file>icons/32x32/application-exit.png</file>
         <file>icons/32x32/charset-document-open.png</file>
         <file>icons/32x32/charset-document-save-as.png</file>
+        <file>icons/32x32/code-block.png</file>
         <file>icons/32x32/colors-document-open.png</file>
         <file>icons/32x32/colors-document-save-as.png</file>
         <file>icons/32x32/configure-toolbars.png</file>
@@ -105,6 +108,7 @@
         <file>icons/48x48/application-exit.png</file>
         <file>icons/48x48/charset-document-open.png</file>
         <file>icons/48x48/charset-document-save-as.png</file>
+        <file>icons/48x48/code-block.png</file>
         <file>icons/48x48/colors-document-open.png</file>
         <file>icons/48x48/colors-document-save-as.png</file>
         <file>icons/48x48/configure-toolbars.png</file>

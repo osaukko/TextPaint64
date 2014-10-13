@@ -108,29 +108,23 @@ void MainWindow::onChangeIconSize()
         setToolbarIconSize(action->data().toSize());
 }
 
-void MainWindow::onCharacterEditorAligment()
+void MainWindow::onCharacterEditorAlignment()
 {
-    Qt::Alignment alignment;
+    editorWidget->setAlignment(getAlignmentFor(m_characterEditorAlignment));
+}
 
-    // Horizontal
-    if (m_characterEditorAlignment[AlignMenuLeft]->isChecked()) {
-        alignment = Qt::AlignLeft;
-    } else if (m_characterEditorAlignment[AlignMenuRight]->isChecked()) {
-        alignment = Qt::AlignRight;
-    } else {
-        alignment = Qt::AlignHCenter;
+void MainWindow::onCharacterSelectorAlignment()
+{
+    charsetWidget->setAlignment(getAlignmentFor(m_characterSelectorAlignment));
+}
+
+void MainWindow::onCharacterSelectorArrangement()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action) {
+        charsetWidget->setArrangement(
+                    static_cast<CharsetWidget::Arrangement>(action->data().toInt()));
     }
-
-    // Vertical
-    if (m_characterEditorAlignment[AlignMenuTop]->isChecked()) {
-        alignment |= Qt::AlignTop;
-    } else if (m_characterEditorAlignment[AlignMenuBottom]->isChecked()) {
-        alignment |= Qt::AlignBottom;
-    } else {
-        alignment |= Qt::AlignVCenter;
-    }
-
-    editorWidget->setAlignment(alignment);
 }
 
 void MainWindow::onCharacterUndoCommandReady()
@@ -226,6 +220,14 @@ void MainWindow::onScaleActionTriggered()
         QString text = action->text();
         text.chop(1);   // Removing 'x'
         screenWidget->setPixelScaling(text.toInt());
+    }
+}
+
+void MainWindow::onScreenModeTriggered()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action) {
+        setScreenResolution(action->text());
     }
 }
 
@@ -336,26 +338,6 @@ void MainWindow::on_actionResetSettings_triggered()
     }
 }
 
-void MainWindow::on_actionScreenMode38x24_triggered()
-{
-    screenWidget->setScreenSize(QSize(38, 24));
-}
-
-void MainWindow::on_actionScreenMode38x25_triggered()
-{
-    screenWidget->setScreenSize(QSize(38, 25));
-}
-
-void MainWindow::on_actionScreenMode40x24_triggered()
-{
-    screenWidget->setScreenSize(QSize(40, 24));
-}
-
-void MainWindow::on_actionScreenMode40x25_triggered()
-{
-    screenWidget->setScreenSize(QSize(40, 25));
-}
-
 void MainWindow::on_actionScreenModeCustom_triggered()
 {
     bool ok;
@@ -371,16 +353,7 @@ void MainWindow::on_actionScreenModeCustom_triggered()
     if (!ok || resolutionText.isEmpty())
         return; // Cancel
 
-    QStringList items = resolutionText.split(QLatin1Char('x'), QString::SkipEmptyParts);
-    if (items.size() != 2)
-        return; // Invalid input
-
-    QSize newSize;
-    newSize.setWidth(items[0].toInt(&ok));
-    if (ok)
-        newSize.setHeight(items[1].toInt(&ok));
-    if (ok)
-        screenWidget->setScreenSize(newSize);
+    setScreenResolution(resolutionText);
 }
 
 void MainWindow::on_actionScreenOpenCharacterData_triggered()
@@ -506,6 +479,31 @@ QToolButton *MainWindow::createMenuToolButton(QMenu *menu)
     return toolButton;
 }
 
+Qt::Alignment MainWindow::getAlignmentFor(QAction **alignmentActions) const
+{
+    Qt::Alignment alignment;
+
+    // Horizontal
+    if (alignmentActions[AlignMenuLeft]->isChecked()) {
+        alignment = Qt::AlignLeft;
+    } else if (alignmentActions[AlignMenuRight]->isChecked()) {
+        alignment = Qt::AlignRight;
+    } else {
+        alignment = Qt::AlignHCenter;
+    }
+
+    // Vertical
+    if (alignmentActions[AlignMenuTop]->isChecked()) {
+        alignment |= Qt::AlignTop;
+    } else if (alignmentActions[AlignMenuBottom]->isChecked()) {
+        alignment |= Qt::AlignBottom;
+    } else {
+        alignment |= Qt::AlignVCenter;
+    }
+
+    return alignment;
+}
+
 bool MainWindow::loadProjectFile(const QString &fileName)
 {
     QFile file(fileName);
@@ -607,56 +605,88 @@ void MainWindow::restoreSettings()
     QSettings settings("The TextPaint64 Team", "TextPaint64");
 
     settings.beginGroup("MainWindow");
-    restoreGeometry(settings.value("geometry").toByteArray());
-    restoreState(settings.value("state").toByteArray());
-    m_charsetDir = settings.value("charsetDir").toString();
-    m_overlayDir = settings.value("overlayDir").toString();
-    m_projectDir = settings.value("projectDir").toString();
-    m_screenDir = settings.value("screenDir").toString();
-    m_recentProjectsList = settings.value("recentProjects").toStringList();
-    updateRecentFileActions();
-    QSize iconSize = settings.value("toolbarIconSize", QSize(32, 32)).toSize();
-    setToolbarIconSize(iconSize);
-    foreach (QAction *action, m_toolbarIconSizeGroup->actions()) {
-        if (action->data().toSize() == iconSize) {
-            action->setChecked(true);
-            break;
+    {
+        restoreGeometry(settings.value("geometry").toByteArray());
+        restoreState(settings.value("state").toByteArray());
+        m_charsetDir = settings.value("charsetDir").toString();
+        m_overlayDir = settings.value("overlayDir").toString();
+        m_projectDir = settings.value("projectDir").toString();
+        m_screenDir = settings.value("screenDir").toString();
+        m_recentProjectsList = settings.value("recentProjects").toStringList();
+        updateRecentFileActions();
+        QSize iconSize = settings.value("toolbarIconSize", QSize(32, 32)).toSize();
+        setToolbarIconSize(iconSize);
+        foreach (QAction *action, m_toolbarIconSizeGroup->actions()) {
+            if (action->data().toSize() == iconSize) {
+                action->setChecked(true);
+                break;
+            }
+        }
+    }
+    settings.endGroup();
+
+    settings.beginGroup("CharacterSelector");
+    {
+        const int defaultAlignment = static_cast<int>(charsetWidget->alignment());
+        const int defaultArrangement = static_cast<int>(charsetWidget->arrangement());
+        charsetWidget->setShowGrid(settings.value("showGrid", true).toBool());
+        charsetWidget->setAlignment(
+                    static_cast<Qt::Alignment>(
+                        settings.value("alignment", defaultAlignment).toInt()));
+        charsetWidget->setArrangement(
+                    static_cast<CharsetWidget::Arrangement>(
+                        settings.value("arrangement", defaultArrangement).toInt()));
+        actionCharSelectorShowGrid->setChecked(charsetWidget->showGrid());
+        restoreAligmentMenu(charsetWidget->alignment(), m_characterSelectorAlignment);
+        foreach (QAction *action, menuCharSelectorArrangement->actions()) {
+            CharsetWidget::Arrangement arrangement =
+                    static_cast<CharsetWidget::Arrangement>(
+                        action->data().toInt());
+            if (arrangement == charsetWidget->arrangement()) {
+                action->setChecked(true);
+                break;
+            }
         }
     }
     settings.endGroup();
 
     settings.beginGroup("CharacterEditor");
-    editorWidget->setShowGrid(settings.value("showGrid", true).toBool());
-    editorWidget->setAlignment(static_cast<Qt::Alignment>(
-                                   settings.value("alignment", Qt::AlignCenter).toUInt()));
-    m_characterEditorGrid->setChecked(editorWidget->showGrid());
-    restoreAligmentMenu(editorWidget->alignment(), m_characterEditorAlignment);
+    {
+        const int defaultAlignment = static_cast<int>(editorWidget->alignment());
+        editorWidget->setShowGrid(settings.value("showGrid", true).toBool());
+        editorWidget->setAlignment(static_cast<Qt::Alignment>(
+                                       settings.value("alignment", defaultAlignment).toInt()));
+        actionEditorShowGrid->setChecked(editorWidget->showGrid());
+        restoreAligmentMenu(editorWidget->alignment(), m_characterEditorAlignment);
+    }
     settings.endGroup();
 
     settings.beginGroup("Screen");
-    screenWidget->setPixelScaling(settings.value("pixelScaling", 2).toInt());
-    QString scalingText = QString("%1x").arg(screenWidget->pixelScaling());
-    foreach (QAction *action, menuScreenScaling->actions()) {
-        if (action->text() == scalingText) {
-            action->setChecked(true);
-            break;
+    {
+        screenWidget->setPixelScaling(settings.value("pixelScaling", 2).toInt());
+        QString scalingText = QString("%1x").arg(screenWidget->pixelScaling());
+        foreach (QAction *action, menuScreenScaling->actions()) {
+            if (action->text() == scalingText) {
+                action->setChecked(true);
+                break;
+            }
         }
     }
     settings.endGroup();
 
     settings.beginGroup("ScreenOverlay");
-    overlayImageCheckBox->setChecked(settings.value("enabled", false).toBool());
-    setOverlayImageFile(settings.value("imageFile").toString());
-    opacityDoubleSpinBox->setValue(settings.value("opacity", 50.0).toReal());
-    xOffsetSlider->setValue(settings.value("xOffset").toInt());
-    yOffsetSlider->setValue(settings.value("yOffset").toInt());
+    {
+        overlayImageCheckBox->setChecked(settings.value("enabled", false).toBool());
+        setOverlayImageFile(settings.value("imageFile").toString());
+        opacityDoubleSpinBox->setValue(settings.value("opacity", 50.0).toReal());
+        xOffsetSlider->setValue(settings.value("xOffset").toInt());
+        yOffsetSlider->setValue(settings.value("yOffset").toInt());
+        screenWidget->setOverlayEnabled(overlayImageCheckBox->isChecked());
+        screenWidget->setOverlayOpacity(opacityDoubleSpinBox->value() * 0.01);
+        screenWidget->setOverlayXOffset(xOffsetSlider->value());
+        screenWidget->setOverlayYOffset(yOffsetSlider->value());
+    }
     settings.endGroup();
-
-    // Making sure that overlay settings are restored in screenWidget too.
-    screenWidget->setOverlayEnabled(overlayImageCheckBox->isChecked());
-    screenWidget->setOverlayOpacity(opacityDoubleSpinBox->value() * 0.01);
-    screenWidget->setOverlayXOffset(xOffsetSlider->value());
-    screenWidget->setOverlayYOffset(yOffsetSlider->value());
 }
 
 bool MainWindow::saveProjectFile(const QString &fileName)
@@ -710,31 +740,47 @@ void MainWindow::saveSettings()
     QSettings settings("The TextPaint64 Team", "TextPaint64");
 
     settings.beginGroup("MainWindow");
-    settings.setValue("geometry", saveGeometry());
-    settings.setValue("state", saveState());
-    settings.setValue("charsetDir", m_charsetDir);
-    settings.setValue("overlayDir", m_overlayDir);
-    settings.setValue("projectDir", m_projectDir);
-    settings.setValue("screenDir", m_screenDir);
-    settings.setValue("recentProjects", m_recentProjectsList);
-    settings.setValue("toolbarIconSize", fileToolBar->iconSize());
+    {
+        settings.setValue("geometry", saveGeometry());
+        settings.setValue("state", saveState());
+        settings.setValue("charsetDir", m_charsetDir);
+        settings.setValue("overlayDir", m_overlayDir);
+        settings.setValue("projectDir", m_projectDir);
+        settings.setValue("screenDir", m_screenDir);
+        settings.setValue("recentProjects", m_recentProjectsList);
+        settings.setValue("toolbarIconSize", fileToolBar->iconSize());
+    }
+    settings.endGroup();
+
+    settings.beginGroup("CharacterSelector");
+    {
+        settings.setValue("showGrid", charsetWidget->showGrid());
+        settings.setValue("alignment", static_cast<int>(charsetWidget->alignment()));
+        settings.setValue("arrangement", static_cast<int>(charsetWidget->arrangement()));
+    }
     settings.endGroup();
 
     settings.beginGroup("CharacterEditor");
-    settings.setValue("showGrid", editorWidget->showGrid());
-    settings.setValue("alignment", static_cast<quint32>(editorWidget->alignment()));
+    {
+        settings.setValue("showGrid", editorWidget->showGrid());
+        settings.setValue("alignment", static_cast<int>(editorWidget->alignment()));
+    }
     settings.endGroup();
 
     settings.beginGroup("Screen");
-    settings.setValue("pixelScaling", screenWidget->pixelScaling());
+    {
+        settings.setValue("pixelScaling", screenWidget->pixelScaling());
+    }
     settings.endGroup();
 
     settings.beginGroup("ScreenOverlay");
-    settings.setValue("enabled", overlayImageCheckBox->isChecked());
-    settings.setValue("imageFile", overlayLineEdit->text());
-    settings.setValue("opacity", opacityDoubleSpinBox->value());
-    settings.setValue("xOffset", xOffsetSlider->value());
-    settings.setValue("yOffset", yOffsetSlider->value());
+    {
+        settings.setValue("enabled", overlayImageCheckBox->isChecked());
+        settings.setValue("imageFile", overlayLineEdit->text());
+        settings.setValue("opacity", opacityDoubleSpinBox->value());
+        settings.setValue("xOffset", xOffsetSlider->value());
+        settings.setValue("yOffset", yOffsetSlider->value());
+    }
     settings.endGroup();
 }
 
@@ -774,18 +820,35 @@ void MainWindow::setOverlayImageFile(const QString &fileName)
     screenWidget->setOverlayImageFile(fileName);
 }
 
+void MainWindow::setScreenResolution(const QString &resolutionText)
+{
+    QStringList items = resolutionText.split(QLatin1Char('x'), QString::SkipEmptyParts);
+    if (items.size() != 2) {
+        statusbar->showMessage(tr("Invalid resolution: %1").arg(resolutionText), 3000);
+        return;
+    }
+    QSize newSize;
+    bool widthOk;
+    bool heightOk;
+    newSize.setWidth(items[0].toInt(&widthOk));
+    newSize.setHeight(items[1].toInt(&heightOk));
+    if (widthOk && heightOk) {
+        screenWidget->setScreenSize(newSize);
+    }
+}
+
 void MainWindow::setupAlignmentMenu(QMenu *menu, QAction **alignmentActions,
                                     const QObject *receiver, const char *method)
 {
     // Create menu items
     alignmentActions[AlignMenuHLabel ] = menu->addSeparator();
-    alignmentActions[AlignMenuLeft   ] = menu->addAction(tr("Left"));
-    alignmentActions[AlignMenuHCenter] = menu->addAction(tr("Center"));
-    alignmentActions[AlignMenuRight  ] = menu->addAction(tr("Right"));
+    alignmentActions[AlignMenuLeft   ] = menu->addAction(tr("Align &Left"));
+    alignmentActions[AlignMenuHCenter] = menu->addAction(tr("Align &Center"));
+    alignmentActions[AlignMenuRight  ] = menu->addAction(tr("Align &Right"));
     alignmentActions[AlignMenuVLabel ] = menu->addSeparator();
-    alignmentActions[AlignMenuTop    ] = menu->addAction(tr("Top"));
-    alignmentActions[AlignMenuVCenter] = menu->addAction(tr("Center"));
-    alignmentActions[AlignMenuBottom ] = menu->addAction(tr("Bottom"));
+    alignmentActions[AlignMenuTop    ] = menu->addAction(tr("Align &Top"));
+    alignmentActions[AlignMenuVCenter] = menu->addAction(tr("Align &Middle"));
+    alignmentActions[AlignMenuBottom ] = menu->addAction(tr("Align &Bottom"));
 
     // Set icons
     alignmentActions[AlignMenuLeft   ]->setIcon(iIconCache.alignLeft());
@@ -819,7 +882,7 @@ void MainWindow::setupAlignmentMenu(QMenu *menu, QAction **alignmentActions,
     int fixedMenuWidth = qMax(menu->fontMetrics().width(alignmentActions[AlignMenuHLabel]->text()),
                               menu->fontMetrics().width(alignmentActions[AlignMenuVLabel]->text()));
     fixedMenuWidth += 48; // Some extra pixels for borders and margins
-    menu->setFixedWidth(fixedMenuWidth);
+    menu->setFixedWidth(qMax(fixedMenuWidth, menu->sizeHint().width()));
 }
 
 void MainWindow::setupCharsetMenu()
@@ -973,6 +1036,12 @@ void MainWindow::setupScreenMenu()
     actionScreenSaveCharacterData->setIcon(iIconCache.screenDocumentSaveAs());
     actionScreenOpenColorData->setIcon(iIconCache.colorsDocumentOpen());
     actionScreenSaveColorData->setIcon(iIconCache.colorsDocumentSaveAs());
+
+    // Connections
+    connect(actionScreenMode38x24, SIGNAL(triggered()), SLOT(onScreenModeTriggered()));
+    connect(actionScreenMode38x25, SIGNAL(triggered()), SLOT(onScreenModeTriggered()));
+    connect(actionScreenMode40x24, SIGNAL(triggered()), SLOT(onScreenModeTriggered()));
+    connect(actionScreenMode40x25, SIGNAL(triggered()), SLOT(onScreenModeTriggered()));
 }
 
 void MainWindow::setupToolbars()
@@ -1049,20 +1118,36 @@ void MainWindow::setupWindowMenu()
         m_toolbarIconSizeGroup->addAction(iconSizeAction);
     }
 
+    // Setup character selector menu
+    QActionGroup *group = new QActionGroup(this);
+    foreach (QAction *action, menuCharSelectorArrangement->actions()) {
+        group->addAction(action);
+        connect(action, SIGNAL(triggered()), SLOT(onCharacterSelectorArrangement()));
+    }
+    actionCharSelector4x64->setData(CharsetWidget::Arrange4x64);
+    actionCharSelector8x32->setData(CharsetWidget::Arrange8x32);
+    actionCharSelector16x16->setData(CharsetWidget::Arrange16x16);
+    actionCharSelector32x8->setData(CharsetWidget::Arrange32x8);
+    actionCharSelector64x4->setData(CharsetWidget::Arrange64x4);
+    setupAlignmentMenu(menuCharacterSelector, m_characterSelectorAlignment,
+                       this, SLOT(onCharacterSelectorAlignment()));
+
     // Setup character editor menu
-    m_characterEditorGrid = menuCharacterEditor->addAction(tr("Show &Grid"));
-    m_characterEditorGrid->setCheckable(true);
     setupAlignmentMenu(menuCharacterEditor, m_characterEditorAlignment,
-                       this, SLOT(onCharacterEditorAligment()));
+                       this, SLOT(onCharacterEditorAlignment()));
 
     // Icons
     menuDocks->setIcon(iIconCache.viewForm());
     menuToolbars->setIcon(iIconCache.configureToolbars());
-    m_characterEditorGrid->setIcon(iIconCache.viewGrid());
+    menuCharSelectorArrangement->setIcon(iIconCache.codeBlock());
+    actionCharSelectorShowGrid->setIcon(iIconCache.viewGrid());
+    actionEditorShowGrid->setIcon(iIconCache.viewGrid());
     actionResetSettings->setIcon(iIconCache.documentRevert());
 
     // Connections
-    connect(m_characterEditorGrid, SIGNAL(toggled(bool)), editorWidget, SLOT(setShowGrid(bool)));
+    connect(actionCharSelectorShowGrid, SIGNAL(toggled(bool)),
+            charsetWidget, SLOT(setShowGrid(bool)));
+    connect(actionEditorShowGrid, SIGNAL(toggled(bool)), editorWidget, SLOT(setShowGrid(bool)));
 }
 
 QString MainWindow::strippedName(const QString &fullFileName)

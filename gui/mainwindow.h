@@ -42,7 +42,9 @@ protected:
 
 private slots:
     void            onChangeIconSize();
-    void            onCharacterEditorAligment();
+    void            onCharacterEditorAlignment();
+    void            onCharacterSelectorAlignment();
+    void            onCharacterSelectorArrangement();
     void            onCharacterUndoCommandReady();
     void            onLoadBuiltIn();
     void            onModify();
@@ -53,6 +55,7 @@ private slots:
     bool            onSaveProject();
     bool            onSaveProjectAs();
     void            onScaleActionTriggered();
+    void            onScreenModeTriggered();
     void            onScreenSizeChanged(const QSize &screenSize);
     void            onScreenUndoCommandReady();
 
@@ -62,10 +65,6 @@ private slots:
     void            on_actionCharsetOpenFile_triggered();
     void            on_actionCharsetSaveAs_triggered();
     void            on_actionResetSettings_triggered();
-    void            on_actionScreenMode38x24_triggered();
-    void            on_actionScreenMode38x25_triggered();
-    void            on_actionScreenMode40x24_triggered();
-    void            on_actionScreenMode40x25_triggered();
     void            on_actionScreenModeCustom_triggered();
     void            on_actionScreenOpenCharacterData_triggered();
     void            on_actionScreenOpenColorData_triggered();
@@ -77,6 +76,7 @@ private slots:
 
 private:
     QToolButton     *createMenuToolButton(QMenu *menu);
+    Qt::Alignment   getAlignmentFor(QAction **alignmentActions) const;
     bool            loadProjectFile(const QString &fileName);
     bool            okToContinue();
     void            restoreAligmentMenu(Qt::Alignment alignment, QAction **alignmentActions);
@@ -86,6 +86,7 @@ private:
     void            setCurrentProjectFile(const QString &fileName);
     void            setToolbarIconSize(const QSize &size);
     void            setOverlayImageFile(const QString &fileName);
+    void            setScreenResolution(const QString &resolutionText);
     void            setupAlignmentMenu(QMenu *menu, QAction **alignmentActions,
                                        const QObject *receiver, const char *method);
     void            setupCharsetMenu();
@@ -124,8 +125,8 @@ private:
     QString         m_screenDir;
 
     QToolButton     *m_builtInCharsetToolButton;
-    QAction         *m_characterEditorGrid;
     QAction         *m_characterEditorAlignment[AlignMenuItemCount];
+    QAction         *m_characterSelectorAlignment[AlignMenuItemCount];
     QToolButton     *m_hiResTextModeToolButton;
     QToolButton     *m_pixelScalingToolButton;
     QAction         *m_recentProjectActions[MaxRecentProjects];
