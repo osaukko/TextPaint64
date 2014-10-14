@@ -60,6 +60,10 @@ public:
 
     QUndoCommand    *createUndoCommand();
 
+public:
+    virtual QSize   minimumSizeHint() const;
+    virtual QSize   sizeHint() const;
+
 signals:
     void            characterChanged(int index);
     void            charsetChanged();
@@ -71,6 +75,10 @@ public slots:
     void            editBegin();
     void            editEnd();
     void            selectCharacter(int index);
+    void            selectDown();
+    void            selectLeft();
+    void            selectRight();
+    void            selectUp();
     void            setBackgroundColor(const QColor &backgroundColor);
     void            setForegroundColor(const QColor &foregroundColor);
     void            setShowGrid(bool show);
@@ -81,14 +89,20 @@ protected:
     virtual void    mousePressEvent(QMouseEvent *event);
     virtual void    mouseReleaseEvent(QMouseEvent *event);
     virtual void    paintEvent(QPaintEvent *event);
+    virtual void    resizeEvent(QResizeEvent *event);
 
 private:
+    QRect           characterRect(int x, int y);
     bool            indexToPos(int index, int &x, int &y) const;
+    QSize           optimalSize(int pixelSize) const;
     void            paintOneCharacter();
     void            paintFullSet();
     int             posToIndex(int x, int y) const;
+    void            resizePixmap(const QSize &size);
     void            selectCharacter(const QPoint &pos);
+    QRect           selectionRect(int x, int y) const;
     void            updateFullSet();
+    void            updateOffset();
     void            updateOneCharacter(int index);
 
 private slots:
@@ -105,10 +119,15 @@ private:
     Qt::Alignment   m_alignment;
     Arrangement     m_arrangement;
     QColor          m_backgroundColor;
+    int             m_cellSize;
+    int             m_characterCols;
+    int             m_characterRows;
     QByteArray      m_charset;
     QPixmap         m_charsetPixmap;
     QColor          m_foregroundColor;
     QByteArray      m_redoData;
+    int             m_pixelScale;
+    QPoint          m_pixmapOffset;
     int             m_selectedCharacterIndex;
     QPen            m_selectionPen;
     bool            m_showGrid;

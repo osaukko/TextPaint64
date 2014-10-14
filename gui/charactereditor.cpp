@@ -203,10 +203,9 @@ void CharacterEditor::mouseClick(const QPoint &pos, bool leftButton)
 
 QSize CharacterEditor::optimalSize(int pixelSize) const
 {
-    int dimension = pixelSize * 8;
+    int dimension = 2 + pixelSize * 8;
     if (m_showGrid)
         dimension += 7;
-    dimension += 2;
     return QSize(dimension, dimension);
 }
 

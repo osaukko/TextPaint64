@@ -366,11 +366,11 @@
       <property name="title">
        <string>&amp;Arrangement</string>
       </property>
-      <addaction name="actionCharSelector4x64"/>
-      <addaction name="actionCharSelector8x32"/>
-      <addaction name="actionCharSelector16x16"/>
-      <addaction name="actionCharSelector32x8"/>
       <addaction name="actionCharSelector64x4"/>
+      <addaction name="actionCharSelector32x8"/>
+      <addaction name="actionCharSelector16x16"/>
+      <addaction name="actionCharSelector8x32"/>
+      <addaction name="actionCharSelector4x64"/>
      </widget>
      <addaction name="menuCharSelectorArrangement"/>
      <addaction name="actionCharSelectorShowGrid"/>
@@ -489,22 +489,6 @@
     <layout class="QVBoxLayout" name="charsetVerticalLayout">
      <item>
       <widget class="CharsetWidget" name="charsetWidget" native="true"/>
-     </item>
-     <item>
-      <spacer name="charsetVerticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Preferred</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </widget>

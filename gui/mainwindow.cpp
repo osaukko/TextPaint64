@@ -55,19 +55,19 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Left:
-        charsetWidget->selectCharacter(charsetWidget->selectedCharacterIndex() - 1);
+        charsetWidget->selectLeft();
         event->accept();
         break;
     case Qt::Key_Up:
-        charsetWidget->selectCharacter(charsetWidget->selectedCharacterIndex() - 16);
+        charsetWidget->selectUp();
         event->accept();
         break;
     case Qt::Key_Right:
-        charsetWidget->selectCharacter(charsetWidget->selectedCharacterIndex() + 1);
+        charsetWidget->selectRight();
         event->accept();
         break;
     case Qt::Key_Down:
-        charsetWidget->selectCharacter(charsetWidget->selectedCharacterIndex() + 16);
+        charsetWidget->selectDown();
         event->accept();
         break;
     case Qt::Key_1:
@@ -905,7 +905,6 @@ void MainWindow::setupCustomWidgets()
     // Charset widget
     charsetWidget->setBackgroundColor(paletteWidget->backgroundColor());
     charsetWidget->setForegroundColor(paletteWidget->foregroundColor());
-    charsetVerticalLayout->setAlignment(charsetWidget, Qt::AlignCenter);
 
     // Editor widget
     editorWidget->setBackgroundColor(paletteWidget->backgroundColor());
