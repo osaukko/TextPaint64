@@ -3,6 +3,8 @@
 TextPaint64 is a application for making Commodore 64 text mode graphics and
 editing them.
 
+![Screenshot](docs/screenshot.png?raw=true "Screenshot")
+
 ## How do I get set up? ##
 
 This application is made by using Qt framework. Qt version 5.x is recommended
