@@ -8,7 +8,7 @@ editing them.
 ## How do I get set up? ##
 
 This application is made by using Qt framework. Qt version 5.x is recommended
-but application should compile without problems with Qt 4.x versions as .
+but application should compile without problems with Qt 4.x versions as well.
 
 ### Building in Linux ###
 
